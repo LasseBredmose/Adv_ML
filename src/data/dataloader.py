@@ -7,6 +7,7 @@ import torch
 class MURADataset(Dataset):
     def __init__(self, data_dir, annotation_file, paths_file, transform=None):
         anno_df = pd.read_csv(f"{data_dir}/{annotation_file}", names=["file", "label"])
+        anno_df["label"] = anno_df.file.str.split("/").str[2].str[3:]
 
         files_df = pd.read_csv(f"{data_dir}/{paths_file}", names=["img_file"])
 
