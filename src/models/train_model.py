@@ -8,105 +8,90 @@ from torch.utils.data import DataLoader
 import torchvision.transforms as transforms
 from models import CNN
 from dataloader import MURADataset
-from tqdm import tqdm
+from torch.optim.lr_scheduler import ReduceLROnPlateau
+from torch.autograd import Variable
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
+if __name__ == '__main__':
+    device = "cuda" if torch.cuda.is_available() else "cpu"
 
+    # Transforming the data, such that they all follow the same path
+    transform = transforms.Compose(
+        [
+            transforms.Resize((256, 256)),
+            transforms.ToTensor(),
+            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+        ]
+    )
 
-transform = transforms.Compose(
-    [
-        transforms.Resize((356, 356)),
-        transforms.RandomCrop((299, 299)),
-        transforms.ToTensor(),
-        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
-    ]
-)
+    num_epochs = 10
+    learning_rate = 0.00001
+    w_decay = 0.001
+    train_CNN = False
+    batch_size = 32
+    shuffle = True
+    pin_memory = True
+    num_workers = 1
 
-num_epochs = 10
-learning_rate = 0.00001
-train_CNN = False
-batch_size = 32
-shuffle = True
-pin_memory = True
-num_workers = 1
+    dataset = MURADataset(
+        "data",
+        "MURA-v1.1/train_labeled_studies.csv",
+        "MURA-v1.1/train_image_paths.csv",
+        transform=transform,
+    )
 
-dataset = MURADataset(
-    "data",
-    "MURA-v1.1/train_labeled_studies.csv",
-    "MURA-v1.1/train_image_paths.csv",
-    transform=transform,
-)
-train_set, validation_set = torch.utils.data.random_split(
-    dataset, [20000, len(dataset) - 20000]
-)
-train_loader = DataLoader(
-    dataset=train_set,
-    shuffle=shuffle,
-    batch_size=batch_size,
-    num_workers=num_workers,
-    pin_memory=pin_memory,
-)
-validation_loader = DataLoader(
-    dataset=validation_set,
-    shuffle=shuffle,
-    batch_size=batch_size,
-    num_workers=num_workers,
-    pin_memory=pin_memory,
-)
+    train_set, validation_set = torch.utils.data.random_split(
+        dataset, [20000, len(dataset) - 20000]
+    )
 
-model = CNN().to(device)
+    train_loader = DataLoader(
+        dataset=dataset,
+        shuffle=shuffle,
+        batch_size=batch_size,
+        num_workers=num_workers,
+    )
 
-criterion = nn.BCELoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+    validation_loader = DataLoader(
+        dataset=validation_set,
+        shuffle=shuffle,
+        batch_size=batch_size,
+        num_workers=num_workers,
+    )
 
-for name, param in model.inception.named_parameters():
-    if "fc.weight" in name or "fc.bias" in name:
-        param.requires_grad = True
-    else:
-        param.requires_grad = train_CNN
+    model = CNN(input_channels=3,input_height=256,input_width=256,num_classes=7).to(device)
 
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate,weight_decay=w_decay)
+    scheduler = ReduceLROnPlateau(optimizer,'min')
+    criterion = nn.CrossEntropyLoss()
 
-def check_accuracy(loader, model):
-    if loader == train_loader:
-        print("Checking accuracy on training data")
-    else:
-        print("Checking accuracy on validation data")
+    num_epoch = 10  # Your code here!
 
-    num_correct = 0
-    num_samples = 0
-    model.eval()
+    for epoch in range(num_epoch):  # loop over the dataset multiple times
 
-    with torch.no_grad():
-        for x, y in loader:
-            x = x.to(device=device)
-            y = y.to(device=device)
+        running_loss = 0.0
+        for i, data in enumerate(train_loader, 0):
+            # get the inputs
+            inputs, labels = data
 
-            scores = model(x)
-            predictions = torch.tensor([1.0 if i >= 0.5 else 0.0 for i in scores]).to(
-                device
-            )
-            num_correct += (predictions == y).sum()
-            num_samples += predictions.size(0)
-    return f"{float(num_correct)/float(num_samples)*100:.2f}"
+            # wrap them in Variable
+            inputs, labels = Variable(inputs), Variable(labels)
 
-
-def train():
-    model.train()
-    for epoch in range(num_epochs):
-        loop = tqdm(train_loader, total=len(train_loader), leave=True)
-        if epoch % 2 == 0:
-            loop.set_postfix(val_acc=check_accuracy(validation_loader, model))
-        for imgs, labels in loop:
-            imgs = imgs.to(device)
-            labels = labels.to(device)
-            outputs = model(imgs)
-            loss = criterion(outputs, labels)
+            # zero the parameter gradients
             optimizer.zero_grad()
+            
+            # forward + backward + optimize
+            output = model(inputs)
+            loss = criterion(output, labels)
             loss.backward()
             optimizer.step()
-            loop.set_description(f"Epoch [{epoch}/{num_epochs}]")
-            loop.set_postfix(loss=loss.item())
+
+            # print statistics
+            running_loss += loss.item()
+            if i % 10 == 9:    # print every 1000 mini-batches
+                print('[%d, %5d] loss: %.3f' %
+                    (epoch + 1, i + 1, running_loss / 10))
+                running_loss = 0.0
+
+    print('Finished Training')
 
 
-if __name__ == "__main__":
-    train()
+
