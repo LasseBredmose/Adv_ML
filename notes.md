@@ -15,3 +15,15 @@
  * Bayesian networks are different from bayesian neural netwokrs(we are doing the neural part)
  * The Bayesian network builds upon the CNN - we just keep track on different things and then do the some prediction in the end
  * We don't need to worry so much about the paper - More of a guideline
+
+**Meeting 8/3**
+  * Next week get a decent CNN
+  * Accuracy of 80% or above
+  * 2 layers are probably to litte
+  * Laplace redux - paper and documentation [GITHUB](https://arxiv.org/abs/2106.14806)
+  * Option 1: 
+    * Fully trained network - load the model - tell the package to do it on that
+  * Option 2:
+    * Do the laplace live - but can be more complex and computationally hard
+  * Test the two different ways
+  * Laplace on the last fully connected layer
