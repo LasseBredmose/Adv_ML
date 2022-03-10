@@ -14,17 +14,18 @@ class MURADataset(Dataset):
         files_df["file"] = files_df["img_file"].str.split("image").str[0]
         anno_df = files_df.merge(anno_df, on="file")
 
-        mapper = {'SHOULDER': 0,
-                  'HUMERUS': 1, 
-                  'FINGER': 2, 
-                  'ELBOW': 3, 
-                  'WRIST': 4, 
-                  'FOREARM': 5,
-                  'HAND': 6}
+        mapper = {
+            "SHOULDER": 0,
+            "HUMERUS": 1,
+            "FINGER": 2,
+            "ELBOW": 3,
+            "WRIST": 4,
+            "FOREARM": 5,
+            "HAND": 6,
+        }
 
-        
-        anno_df['label'] = anno_df['label'].replace(mapper)
-        
+        anno_df["label"] = anno_df["label"].replace(mapper)
+
         self.data_dir = data_dir
         self.annotations = anno_df[["img_file", "label"]]
         self.transform = transform
@@ -36,7 +37,7 @@ class MURADataset(Dataset):
 
         if self.transform is not None:
             img = self.transform(img)
-        
+
         return (img, label)
 
     def __len__(self):
