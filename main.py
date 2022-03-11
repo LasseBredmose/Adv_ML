@@ -17,7 +17,27 @@ from src.models.models import CNN
 warnings.filterwarnings("ignore")
 
 if __name__ == "__main__":
+
+    ### Cuda Stuff
     device = "cuda" if torch.cuda.is_available() else "cpu"
+
+    use_cuda = torch.cuda.is_available()
+    #use_cuda = False
+    print("Running GPU.") if use_cuda else print("No GPU available.")
+
+    def get_variable(x):
+        # Converts tensors to cuda, if available.
+        if use_cuda:
+            return x.cuda()
+        return x
+
+    def get_numpy(x):
+        # Get numpy array for both cuda and not. 
+        if use_cuda:
+            '''return x.cpu().item()
+        return x.item()'''
+            return x.cpu().data.numpy()
+        return x.data.numpy()
 
     # Transforming the data, such that they all follow the same path
     transform = transforms.Compose(
@@ -28,7 +48,7 @@ if __name__ == "__main__":
         ]
     )
 
-    num_epochs = 100
+    num_epochs = 50
     learning_rate = 0.001
     w_decay = 0.001
     train_CNN = False
@@ -51,12 +71,12 @@ if __name__ == "__main__":
         transform=transform,
     )
 
-    # train_set_dummy, validation_set = torch.utils.data.random_split(
-    #    dataset, [len(dataset) - 250, 250]
-    # )
-    # train_set, dummy = torch.utils.data.random_split(
-    #    train_set_dummy, [750, len(train_set_dummy) - 750]
-    # )
+    '''train_set_dummy, validation_set = torch.utils.data.random_split(
+        dataset, [len(dataset) - 250, 250]
+    )
+    train_set, dummy = torch.utils.data.random_split(
+        train_set_dummy, [750, len(train_set_dummy) - 750]
+    )'''
     train_set, validation_set = torch.utils.data.random_split(
         dataset, [25765, len(dataset) - 25765]
     )
@@ -104,7 +124,7 @@ if __name__ == "__main__":
             inputs, labels = data
 
             # wrap them in Variable
-            inputs, labels = Variable(inputs), Variable(labels)
+            inputs, labels = Variable(get_variable(inputs)), Variable(get_variable(labels))
 
             # zero the parameter gradients
             optimizer.zero_grad()
@@ -115,9 +135,9 @@ if __name__ == "__main__":
             loss.backward()
             optimizer.step()
 
-            training_loss.append(loss.item())
+            training_loss.append(get_numpy(loss))
             # print statistics
-            running_loss += loss.item()
+            running_loss += get_numpy(loss)
 
             if i % 10 == 9:  # print every 10 mini-batches
                 print("[%d, %5d] loss: %.3f" % (epoch + 1, i + 1, running_loss / 10))
@@ -137,13 +157,13 @@ if __name__ == "__main__":
             inputs, labels = data
 
             # wrap them in Variable
-            inputs, labels = Variable(inputs), Variable(labels)
+            inputs, labels = Variable(get_variable(inputs)), Variable(get_variable(labels))
 
             # forward + backward + optimize
             output = model(inputs)
             loss = criterion(output, labels)
 
-            validation_loss.append(loss.item())
+            validation_loss.append(get_numpy(loss))
 
         train_loss_epoch.append(np.mean(training_loss))
         validation_loss_epoch.append(np.mean(validation_loss))
@@ -164,15 +184,15 @@ if __name__ == "__main__":
         inputs, labels = data
 
         # wrap them in Variable
-        inputs, labels = Variable(inputs), Variable(labels)
+        inputs, labels = Variable(get_variable(inputs)), Variable(labels)
         output = model(inputs)
 
         predicted = torch.max(output, 1)[1]
         total += labels.size(0)
-        correct += (predicted == labels).sum()
+        correct += (get_numpy(predicted) == labels.numpy).sum()
 
-    print("Accuracy of the network: {:4.2f} %".format(100 * correct.true_divide(total)))
-
+    #print("Accuracy of the network: {:4.2f} %".format(100 * correct.true_divide(total)))
+    print("Accuracy of the network: {:4.2f} %".format(100 * np.true_divide(correct,total)))
     plt.plot(
         range(num_epochs), train_loss_epoch, range(num_epochs), validation_loss_epoch
     )
