@@ -48,7 +48,7 @@ if __name__ == "__main__":
         ]
     )
 
-    num_epochs = 50
+    num_epochs = 1
     learning_rate = 0.001
     w_decay = 0.001
     train_CNN = False
@@ -71,12 +71,12 @@ if __name__ == "__main__":
         transform=transform,
     )
 
-    '''train_set_dummy, validation_set = torch.utils.data.random_split(
-        dataset, [len(dataset) - 250, 250]
-    )
-    train_set, dummy = torch.utils.data.random_split(
-        train_set_dummy, [750, len(train_set_dummy) - 750]
-    )'''
+    # train_set_dummy, validation_set = torch.utils.data.random_split(
+    #     dataset, [len(dataset) - 250, 250]
+    # )
+    # train_set, dummy = torch.utils.data.random_split(
+    #     train_set_dummy, [750, len(train_set_dummy) - 750]
+    # )
     train_set, validation_set = torch.utils.data.random_split(
         dataset, [25765, len(dataset) - 25765]
     )
@@ -173,7 +173,7 @@ if __name__ == "__main__":
             best_model = copy.deepcopy(model.state_dict())
     print("Finished !!")
 
-    correct = 0
+    correct = 0 
     total = 0  
 
     model.load_state_dict(best_model)
@@ -189,7 +189,7 @@ if __name__ == "__main__":
 
         predicted = torch.max(output, 1)[1]
         total += labels.size(0)
-        correct += (get_numpy(predicted) == labels.numpy).sum()
+        correct += (get_numpy(predicted) == labels.numpy()).sum()
 
     #print("Accuracy of the network: {:4.2f} %".format(100 * correct.true_divide(total)))
     print("Accuracy of the network: {:4.2f} %".format(100 * np.true_divide(correct,total)))
