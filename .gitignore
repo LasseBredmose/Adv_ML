@@ -1,1 +1,10 @@
 /data/MURA-v1.1
+.DS_Store
+.flake8
+.vscode/
+data/.DS_Store
+laplace_model.py
+models/
+src/__pycache__/
+src/data/__pycache__/
+src/models/__pycache__/

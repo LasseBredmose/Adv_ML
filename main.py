@@ -18,7 +18,7 @@ warnings.filterwarnings("ignore")
 
 if __name__ == "__main__":
 
-    ### Cuda Stuff
+    # Cuda Stuff
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     use_cuda = torch.cuda.is_available()
@@ -48,7 +48,7 @@ if __name__ == "__main__":
         ]
     )
 
-    num_epochs = 1
+    num_epochs = 70
     learning_rate = 0.001
     w_decay = 0.001
     train_CNN = False
@@ -77,6 +77,7 @@ if __name__ == "__main__":
     # train_set, dummy = torch.utils.data.random_split(
     #     train_set_dummy, [750, len(train_set_dummy) - 750]
     # )
+
     train_set, validation_set = torch.utils.data.random_split(
         dataset, [25765, len(dataset) - 25765]
     )
@@ -173,12 +174,15 @@ if __name__ == "__main__":
             best_model = copy.deepcopy(model.state_dict())
     print("Finished !!")
 
+    # Storing the model
+    date_time = datetime.now().strftime("%d-%m-%Y_%H")
+    model.load_state_dict(best_model)
+    # torch.save(model, f'./models/trained_model_epocs{num_epochs}_{date_time}.pt')
+    torch.save(model.state_dict(), f'./models/STATEtrained_model_epocs{num_epochs}_{date_time}.pt')
+
+    model.eval()
     correct = 0 
     total = 0  
-
-    model.load_state_dict(best_model)
-    torch.save(model, f'models/trained_model_epocs{num_epochs}_{datetime.now()}.pt')
-    model.eval()
     for data in test_loader:
         # get the inputs
         inputs, labels = data
@@ -197,4 +201,4 @@ if __name__ == "__main__":
         range(num_epochs), train_loss_epoch, range(num_epochs), validation_loss_epoch
     )
     plt.legend(["Training data", "Validation data"])
-    plt.savefig("./reports/kaffemaskine")
+    plt.savefig(f'./reports/epocs{num_epochs}_{date_time}')

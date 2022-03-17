@@ -1,6 +1,6 @@
 import torch.nn as nn
+from torch.nn import Conv2d, Dropout2d, Linear
 from torch.nn.functional import relu, softmax
-from torch.nn import Linear, Conv2d, BatchNorm2d, MaxPool2d, Dropout2d
 
 # Defining hyperparameters
 # First convolutional layer
