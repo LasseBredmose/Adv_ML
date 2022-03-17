@@ -10,6 +10,7 @@ from src.models.models import CNN
 
 batch_size = 32
 shuffle = True
+num_workers = 1
 
 warnings.filterwarnings("ignore")
 
