@@ -3,7 +3,6 @@
 .flake8
 .vscode/
 data/.DS_Store
-laplace_model.py
 models/
 src/__pycache__/
 src/data/__pycache__/
