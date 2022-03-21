@@ -71,13 +71,22 @@ if __name__ == "__main__":
     model = CNN(input_channels=3, input_height=256, input_width=256, num_classes=7).to(
         device
     )
+
+    model.eval()
+
     model.load_state_dict(
-        torch.load("./models/STATEtrained_model_epocs1_17-03-2022_14.pt")
+        torch.load(
+            "./models/STATEtrained_model_epocs70_17-03-2022_23.pt",
+            map_location=torch.device("cpu"),
+        )
     )
 
     # User-specified LA flavor
     la = Laplace(
-        model, "classification", subset_of_weights="all", hessian_structure="diag"
+        model,
+        likelihood="classification",
+        subset_of_weights="last_layer",
+        hessian_structure="full",
     )
     la.fit(train_loader)
     la.optimize_prior_precision(method="CV", val_loader=validation_loader)

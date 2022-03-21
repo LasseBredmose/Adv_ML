@@ -22,7 +22,7 @@ if __name__ == "__main__":
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     use_cuda = torch.cuda.is_available()
-    #use_cuda = False
+    # use_cuda = False
     print("Running GPU.") if use_cuda else print("No GPU available.")
 
     def get_variable(x):
@@ -32,10 +32,10 @@ if __name__ == "__main__":
         return x
 
     def get_numpy(x):
-        # Get numpy array for both cuda and not. 
+        # Get numpy array for both cuda and not.
         if use_cuda:
-            '''return x.cpu().item()
-        return x.item()'''
+            """return x.cpu().item()
+            return x.item()"""
             return x.cpu().data.numpy()
         return x.data.numpy()
 
@@ -125,7 +125,9 @@ if __name__ == "__main__":
             inputs, labels = data
 
             # wrap them in Variable
-            inputs, labels = Variable(get_variable(inputs)), Variable(get_variable(labels))
+            inputs, labels = Variable(get_variable(inputs)), Variable(
+                get_variable(labels)
+            )
 
             # zero the parameter gradients
             optimizer.zero_grad()
@@ -158,7 +160,9 @@ if __name__ == "__main__":
             inputs, labels = data
 
             # wrap them in Variable
-            inputs, labels = Variable(get_variable(inputs)), Variable(get_variable(labels))
+            inputs, labels = Variable(get_variable(inputs)), Variable(
+                get_variable(labels)
+            )
 
             # forward + backward + optimize
             output = model(inputs)
@@ -178,11 +182,14 @@ if __name__ == "__main__":
     date_time = datetime.now().strftime("%d-%m-%Y_%H")
     model.load_state_dict(best_model)
     # torch.save(model, f'./models/trained_model_epocs{num_epochs}_{date_time}.pt')
-    torch.save(model.state_dict(), f'./models/STATEtrained_model_epocs{num_epochs}_{date_time}.pt')
+    torch.save(
+        model.state_dict(),
+        f"./models/STATEtrained_model_epocs{num_epochs}_{date_time}.pt",
+    )
 
     model.eval()
-    correct = 0 
-    total = 0  
+    correct = 0
+    total = 0
     for data in test_loader:
         # get the inputs
         inputs, labels = data
@@ -195,10 +202,14 @@ if __name__ == "__main__":
         total += labels.size(0)
         correct += (get_numpy(predicted) == labels.numpy()).sum()
 
-    #print("Accuracy of the network: {:4.2f} %".format(100 * correct.true_divide(total)))
-    print("Accuracy of the network: {:4.2f} %".format(100 * np.true_divide(correct,total)))
+    # print("Accuracy of the network: {:4.2f} %".format(100 * correct.true_divide(total)))
+    print(
+        "Accuracy of the network: {:4.2f} %".format(
+            100 * np.true_divide(correct, total)
+        )
+    )
     plt.plot(
         range(num_epochs), train_loss_epoch, range(num_epochs), validation_loss_epoch
     )
     plt.legend(["Training data", "Validation data"])
-    plt.savefig(f'./reports/epocs{num_epochs}_{date_time}')
+    plt.savefig(f"./reports/epocs{num_epochs}_{date_time}")
