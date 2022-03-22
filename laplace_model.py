@@ -86,7 +86,7 @@ if __name__ == "__main__":
         model,
         likelihood="classification",
         subset_of_weights="last_layer",
-        hessian_structure="full",
+        hessian_structure="diag",
     )
     la.fit(train_loader)
     la.optimize_prior_precision(method="CV", val_loader=validation_loader)
