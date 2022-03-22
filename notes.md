@@ -27,3 +27,15 @@
     * Do the laplace live - but can be more complex and computationally hard
   * Test the two different ways
   * Laplace on the last fully connected layer
+
+
+  **Meeting 22/3**
+    * 4 pages limit(Martin thinks) - Check with course responsible
+      * Describe the methods in a way that someone else from the class can understand the big picture
+      * Similair structure as a scientific paper - but pick and choose(4 pages)
+      * Don't describe CNN etc, but more the Laplace part and the explanations part
+    * Debugging laplace
+      * need model.eval()
+      * try testint without softmax at last
+      * Try and run some test models(from documentation) to test if it even work on the computer
+    * Would be cool if we did gradient explanation, other class does class explanation
