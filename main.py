@@ -20,7 +20,7 @@ warnings.filterwarnings("ignore")
 
 if __name__ == "__main__":
     # Small set?
-    small = 1
+    small = 0
     # Cuda Stuff
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
