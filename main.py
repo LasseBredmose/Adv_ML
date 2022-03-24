@@ -14,10 +14,13 @@ from torch.utils.data import DataLoader
 from src.data.dataloader import MURADataset
 from src.models.models import CNN
 
+from torch.nn.functional import softmax
+
 warnings.filterwarnings("ignore")
 
 if __name__ == "__main__":
-
+    # Small set?
+    small = 1
     # Cuda Stuff
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -70,17 +73,19 @@ if __name__ == "__main__":
         "MURA-v1.1/valid_image_paths.csv",
         transform=transform,
     )
+    if small == 1:
+        train_set, validation_set = torch.utils.data.random_split(
+            dataset, [len(dataset) - 250, 250]
+        )
+        train_set, dummy = torch.utils.data.random_split(
+            train_set, [750, len(train_set) - 750]
+        )
+        num_epochs = 2
+    else:
+        train_set, validation_set = torch.utils.data.random_split(
+            dataset, [25765, len(dataset) - 25765]
+        )
 
-    # train_set_dummy, validation_set = torch.utils.data.random_split(
-    #     dataset, [len(dataset) - 250, 250]
-    # )
-    # train_set, dummy = torch.utils.data.random_split(
-    #     train_set_dummy, [750, len(train_set_dummy) - 750]
-    # )
-
-    train_set, validation_set = torch.utils.data.random_split(
-        dataset, [25765, len(dataset) - 25765]
-    )
     train_loader = DataLoader(
         dataset=train_set,
         shuffle=shuffle,
@@ -133,7 +138,7 @@ if __name__ == "__main__":
             optimizer.zero_grad()
 
             # forward + backward + optimize
-            output = model(inputs)
+            output = softmax(model(inputs), dim=1)
             loss = criterion(output, labels)
             loss.backward()
             optimizer.step()
@@ -165,7 +170,7 @@ if __name__ == "__main__":
             )
 
             # forward + backward + optimize
-            output = model(inputs)
+            output = softmax(model(inputs), dim=1)
             loss = criterion(output, labels)
 
             validation_loss.append(get_numpy(loss))
@@ -196,7 +201,7 @@ if __name__ == "__main__":
 
         # wrap them in Variable
         inputs, labels = Variable(get_variable(inputs)), Variable(labels)
-        output = model(inputs)
+        output = softmax(model(inputs), dim=1)
 
         predicted = torch.max(output, 1)[1]
         total += labels.size(0)

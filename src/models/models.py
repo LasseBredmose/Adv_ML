@@ -111,4 +111,5 @@ class CNN(nn.Module):
         x = self.maxpool(x)
         x = x.view(x.shape[0], -1)
         x = self.dropout(relu(self.l_1(x)))
-        return softmax(self.l_out(x), dim=1)
+        # return softmax(self.l_out(x), dim=1)
+        return self.l_out(x)

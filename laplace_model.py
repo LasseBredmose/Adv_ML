@@ -14,6 +14,20 @@ num_workers = 1
 
 warnings.filterwarnings("ignore")
 
+
+@torch.no_grad()
+def predict(dataloader, model, laplace=False):
+    py = []
+
+    for x, _ in dataloader:
+        if laplace:
+            py.append(model(x))
+        else:
+            py.append(torch.softmax(model(x), dim=-1))
+
+    return torch.cat(py).cpu()
+
+
 if __name__ == "__main__":
     # Cuda Stuff
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -76,10 +90,13 @@ if __name__ == "__main__":
 
     model.load_state_dict(
         torch.load(
-            "./models/STATEtrained_model_epocs70_17-03-2022_23.pt",
-            map_location=torch.device("cpu"),
+            "./models/STATEtrained_model_epocs2_24-03-2022_14.pt",
+            # map_location=torch.device("cpu"),
         )
     )
+
+    # Get targets
+    targets = torch.cat([y for x, y in test_loader], dim=0)
 
     # User-specified LA flavor
     la = Laplace(
@@ -89,7 +106,16 @@ if __name__ == "__main__":
         hessian_structure="diag",
     )
     la.fit(train_loader)
-    la.optimize_prior_precision(method="CV", val_loader=validation_loader)
+    # la.optimize_prior_precision(method="CV", val_loader=validation_loader)
+    la.optimize_prior_precision(method="marglik")
 
     # User-specified predictive approx.
-    pred = la(x, link_approx="probit")
+    # pred = la(test_loader, link_approx="probit")
+
+    probs_laplace = predict(test_loader, la, laplace=True)
+
+    torch.save(probs_laplace, "./reports/probs_laplace.pt")
+    print(f"Shape: {probs_laplace.shape}")
+    acc_laplace = (probs_laplace.argmax(-1) == targets).float().sum() / 3197
+
+    print(f"[Laplace] Acc.: {acc_laplace:.1%}")
