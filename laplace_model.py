@@ -1,5 +1,7 @@
 import warnings
 
+import dill
+
 import torch
 import torchvision.transforms as transforms
 from laplace import Laplace
@@ -7,6 +9,7 @@ from torch.utils.data import DataLoader
 
 from src.data.dataloader import MURADataset
 from src.models.models import CNN
+from netcal.metrics import ECE
 
 batch_size = 32
 shuffle = True
@@ -26,6 +29,11 @@ def predict(dataloader, model, laplace=False):
             py.append(torch.softmax(model(x), dim=-1))
 
     return torch.cat(py).cpu()
+
+
+def save_laplace(la, filepath):
+    with open(filepath, "wb") as outpt:
+        dill.dump(la, outpt)
 
 
 if __name__ == "__main__":
@@ -77,7 +85,7 @@ if __name__ == "__main__":
 
     test_loader = DataLoader(
         dataset=test_set,
-        shuffle=shuffle,
+        shuffle=False,  # very important!
         batch_size=batch_size,
         num_workers=num_workers,
     )
@@ -90,10 +98,12 @@ if __name__ == "__main__":
 
     model.load_state_dict(
         torch.load(
-            "./models/STATEtrained_model_epocs2_24-03-2022_14.pt",
-            # map_location=torch.device("cpu"),
+            "./models/STATEtrained_model_epocs70_24-03-2022_22.pt",
+            map_location=torch.device(device),
         )
     )
+
+    print("Model loaded")
 
     # Get targets
     targets = torch.cat([y for x, y in test_loader], dim=0)
@@ -106,16 +116,25 @@ if __name__ == "__main__":
         hessian_structure="diag",
     )
     la.fit(train_loader)
+    print("Finished fitting")
+
     # la.optimize_prior_precision(method="CV", val_loader=validation_loader)
+
     la.optimize_prior_precision(method="marglik")
 
-    # User-specified predictive approx.
-    # pred = la(test_loader, link_approx="probit")
+    print("Hyperparameters optimized")
+
+    probs_map = predict(test_loader, model, laplace=False)
+    acc_map = (probs_map.argmax(-1) == targets).float().sum() / len(targets)
+    ece_map = ECE(bins=15).measure(probs_map.numpy(), targets.numpy())
+    print(f"[MAP] Acc.: {acc_map:.1%}; ECE: {ece_map:.1%}")
 
     probs_laplace = predict(test_loader, la, laplace=True)
+    acc_laplace = (probs_laplace.argmax(-1) == targets).float().sum() / len(targets)
+    ece_laplace = ECE(bins=15).measure(probs_laplace.numpy(), targets.numpy())
+    print(f"[Laplace] Acc.: {acc_laplace:.1%}; ECE: {ece_laplace:.1%} ")
 
+    # Store the probabilities returned by Laplace
     torch.save(probs_laplace, "./reports/probs_laplace.pt")
-    print(f"Shape: {probs_laplace.shape}")
-    acc_laplace = (probs_laplace.argmax(-1) == targets).float().sum() / 3197
 
-    print(f"[Laplace] Acc.: {acc_laplace:.1%}")
+    save_laplace(la, "./models/laplace.pkl")
