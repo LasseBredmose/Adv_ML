@@ -39,3 +39,11 @@
       * try testint without softmax at last
       * Try and run some test models(from documentation) to test if it even work on the computer
     * Would be cool if we did gradient explanation, other class does class explanation
+    
+**Meeting 29/3**
+* Make a table with computation time for different hessian - argue why we use the one we use
+* Do we want to do gradient explanation or class activation mapping? Sounds like Mikkel thinks class activation
+* Class activations: Which features are important from each class.
+* We expect that our CNN will be close to the average of the of our compution explanations as the ECE is quite low already
+* We get the explatnations from several sampling instances in BNN
+* In practice we get the sampling from the multivariate normal distribution from the BNN?? Where we can extract the means and covariance
