@@ -1,4 +1,5 @@
 import warnings
+import time
 
 from datetime import datetime
 import torch
@@ -78,8 +79,6 @@ def laplace(model_path, hessian):
         )
     )
 
-    print("Model loaded")
-
     # Get targets
     targets = torch.cat([y for x, y in test_loader], dim=0)
 
@@ -90,14 +89,14 @@ def laplace(model_path, hessian):
         subset_of_weights="last_layer",
         hessian_structure=hessian,
     )
+    t0 = time.time()
     la.fit(train_loader)
-    print("Finished fitting")
+    t1 = time.time()
+    print(f"Time elapsed (fit): {t1-t0} seconds")
 
     # la.optimize_prior_precision(method="CV", val_loader=validation_loader)
 
     la.optimize_prior_precision(method="marglik")
-
-    print("Hyperparameters optimized")
 
     probs_laplace = pred(test_loader, la, laplace=True)
     acc_laplace = (probs_laplace.argmax(-1) == targets).float().sum() / len(targets)
@@ -106,9 +105,9 @@ def laplace(model_path, hessian):
 
     # Store the probabilities returned by Laplace
     date_time = datetime.now().strftime("%d-%m-%Y_%H")
-    torch.save(probs_laplace, f"./reports/probs_laplace_{date_time}.pt")
+    torch.save(probs_laplace, f"./reports/probs_laplace_{hessian}_{date_time}.pt")
 
-    save_laplace(la, f"./models/laplace_{date_time}.pkl")
+    save_laplace(la, f"./models/laplace_{hessian}_{date_time}.pkl")
 
 
 def laplace_eval(la_path):
