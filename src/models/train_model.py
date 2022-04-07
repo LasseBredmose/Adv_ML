@@ -11,7 +11,7 @@ from torch.autograd import Variable
 from torch.utils.data import DataLoader
 
 from src.data.dataloader import MURADataset
-from src.models.models import CNN
+from src.models.models import CNN_3
 from src.models.utils import get_numpy, get_variable
 from src.models.Transformation import ChooseTrans
 
@@ -94,7 +94,7 @@ def train(small, transform):
         num_workers=num_workers,
     )
 
-    model = CNN(input_channels=3, input_height=256, input_width=256, num_classes=7).to(
+    model = CNN_3(input_channels=3, input_height=256, input_width=256, num_classes=7).to(
         device
     )
 
