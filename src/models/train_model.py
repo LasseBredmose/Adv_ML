@@ -13,13 +13,14 @@ from torch.utils.data import DataLoader
 from src.data.dataloader import MURADataset
 from src.models.models import CNN
 from src.models.utils import get_numpy, get_variable
+from src.models.Transformation import ChooseTrans
 
 from torch.nn.functional import softmax
 
 warnings.filterwarnings("ignore")
 
 
-def train(small):
+def train(small, transform):
     # Cuda Stuff
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -35,7 +36,7 @@ def train(small):
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
         ]
     )
-
+    ChosenTrans = ['Blank', 'FlipV', 'FlipH', 'Rotate90', 'Rotate180', 'Rotate270']
     num_epochs = 70
     learning_rate = 0.001
     w_decay = 0.001
@@ -58,6 +59,7 @@ def train(small):
         "MURA-v1.1/valid_image_paths.csv",
         transform=transform,
     )
+
     if small == 1:
         train_set, validation_set = torch.utils.data.random_split(
             dataset, [len(dataset) - 250, 250]
@@ -118,6 +120,10 @@ def train(small):
             inputs, labels = Variable(get_variable(inputs)), Variable(
                 get_variable(labels)
             )
+            if transform:
+                trans = ChooseTrans(ChosenTrans)
+                inputs = trans(inputs)
+        
 
             # zero the parameter gradients
             optimizer.zero_grad()
