@@ -1,6 +1,7 @@
 from src.models.train_model import train
 from src.models.predict_model import predict
 from src.models.laplace_model import laplace, laplace_eval, laplace_sample
+from src.models.cam import cam
 import sys
 
 if __name__ == "__main__":
@@ -30,3 +31,9 @@ if __name__ == "__main__":
     elif args[1] == "sample_la":
         la_path = args[2]
         laplace_sample(la_path, 10)
+
+    elif args[1] == "cam":
+        # python main.py cam data/MURA-v1.1/valid/XR_SHOULDER/patient11723/study1_positive/image3.png models/STATEtrained_model_epocs2_24-03-2022_14.pt
+        image_path = args[2]
+        model_path = args[3]
+        cam(image_path, model_path)
