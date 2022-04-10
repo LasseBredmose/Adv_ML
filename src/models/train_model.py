@@ -37,7 +37,7 @@ def train(small, transform):
         ]
     )
     ChosenTrans = ['Blank', 'FlipV', 'FlipH', 'Rotate90', 'Rotate180', 'Rotate270']
-    num_epochs = 70
+    num_epochs = 100
     learning_rate = 0.001
     w_decay = 0.001
     # train_CNN = False
@@ -120,7 +120,7 @@ def train(small, transform):
             inputs, labels = Variable(get_variable(inputs)), Variable(
                 get_variable(labels)
             )
-            if transform:
+            if transform == 1:
                 trans = ChooseTrans(ChosenTrans)
                 inputs = trans(inputs)
         

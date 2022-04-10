@@ -12,7 +12,7 @@ if __name__ == "__main__":
     args = sys.argv
     # args are ['main.py', 'train', ...], so 1-indexed
     if args[1] == "train":
-        train(small=args[2], transform=args[3])
+        train(small=int(args[2]), transform=int(args[3]))
 
     elif args[1] == "predict":
         model_path = args[2]
