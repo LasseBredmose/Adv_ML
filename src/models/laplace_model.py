@@ -8,7 +8,7 @@ from laplace import Laplace
 from torch.utils.data import DataLoader
 
 from src.data.dataloader import MURADataset
-from src.models.models import CNN
+from src.models.models import CNN, CNN_3
 from netcal.metrics import ECE
 from src.models.utils import pred, save_laplace, load_laplace
 
@@ -115,7 +115,7 @@ def laplace_eval(la_path):
     transform = transforms.Compose(
         [
             transforms.Resize((256, 256)),
-            transforms.ToTensor(),
+            transforms.ToTensor(), 
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
         ]
     )
@@ -145,6 +145,34 @@ def laplace_eval(la_path):
     print(f"[Laplace] Acc.: {acc_laplace:.1%}; ECE: {ece_laplace:.1%} ")
 
 
-def laplace_sample(la_path, N):
+def laplace_sample(la_path, N, method):
     la = load_laplace(la_path)
-    return la.sample(N)
+    if method == 'average':
+        samples = la.sample(N).mean(axis=0)
+    if method == 'intersect':
+        samples = la.sample(N).min(axis=0)
+    if method == 'union':
+        samples = la.sample(N).max(axis=0)
+    
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model = CNN_3(input_channels=3, input_height=256, input_width=256, num_classes=7).to(
+        device
+    )
+
+    model.eval()
+
+    model.load_state_dict(
+        torch.load(
+            'models/STATEtrained_model_epocs70_24-03-2022_22.pt',
+            map_location=torch.device(device),
+        )
+    )
+
+    # Change the parameters
+    model.l_out.weight.data = torch.reshape(samples.T, (7,100))
+    
+    date_time = datetime.now().strftime("%d-%m-%Y_%H")
+    torch.save(
+        model.state_dict(),
+        f"./models/BNN_{date_time}.pt",
+    )

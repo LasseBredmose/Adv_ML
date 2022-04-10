@@ -29,11 +29,20 @@ if __name__ == "__main__":
         laplace_eval(la_path)
 
     elif args[1] == "sample_la":
+        # python3 main.py sample_la models/laplace.pkl average
         la_path = args[2]
-        laplace_sample(la_path, 10)
+        method = args[3]
+        laplace_sample(la_path, 10, method)
 
     elif args[1] == "cam":
-        # python main.py cam data/MURA-v1.1/valid/XR_SHOULDER/patient11723/study1_positive/image3.png models/STATEtrained_model_epocs2_24-03-2022_14.pt
+        # Epochs 2:
+        # python3 main.py cam data/MURA-v1.1/valid/XR_SHOULDER/patient11723/study1_positive/image3.png models/STATEtrained_model_epocs2_24-03-2022_14.pt
+        
+        # Epochs 2 igen
+        # python3 main.py cam data/MURA-v1.1/valid/XR_SHOULDER/patient11723/study1_positive/image3.png models/STATEtrained_model_epocs2_07-04-2022_17.pt
+
+        # python3 main.py cam data/MURA-v1.1/valid/XR_SHOULDER/patient11723/study1_positive/image3.png models/STATEtrained_model_epocs70_24-03-2022_22.pt
+        # BNN: python3 main.py cam data/MURA-v1.1/valid/XR_SHOULDER/patient11723/study1_positive/image3.png models/BNN_07-04-2022_16.pt
         image_path = args[2]
         model_path = args[3]
         cam(image_path, model_path)
