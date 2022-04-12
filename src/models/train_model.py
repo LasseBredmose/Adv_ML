@@ -175,12 +175,12 @@ def train(small, transform):
     print("Finished !!")
 
     # Storing the model
-    date_time = datetime.now().strftime("%d-%m-%Y_%H")
+    date_time = datetime.now().strftime("%d/%m_%H")
     model.load_state_dict(best_model)
     # torch.save(model, f'./models/trained_model_epocs{num_epochs}_{date_time}.pt')
     torch.save(
         model.state_dict(),
-        f"./models/STATEtrained_model_epocs{num_epochs}_{date_time}.pt",
+        f"./models/STATEtrained_model_epocs{num_epochs}_{date_time}_trans_{transform}.pt",
     )
 
     model.eval()
@@ -208,4 +208,4 @@ def train(small, transform):
         range(num_epochs), train_loss_epoch, range(num_epochs), validation_loss_epoch
     )
     plt.legend(["Training data", "Validation data"])
-    plt.savefig(f"./reports/epocs{num_epochs}_{date_time}")
+    plt.savefig(f"./reports/epocs{num_epochs}_{date_time}_trans_{transform}")

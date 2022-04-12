@@ -135,11 +135,12 @@ class CNN(nn.Module):
             num_filters_conv5 * self.conv_out_height5 * self.conv_out_width5
         )
 
-        self.l_1 = Linear(
+        '''self.l_1 = Linear(
             in_features=self.l1_in_features // 256, out_features=num_l1, bias=True
-        )
+        )'''
         
-        self.l_out = Linear(in_features=num_l1, out_features=num_classes, bias=False)
+        self.l_out = Linear(
+            in_features=self.l1_in_features // 256, out_features=num_classes, bias=False)
 
         self.maxpool = nn.MaxPool2d(kernel_size=2, stride=2)
 
@@ -163,7 +164,8 @@ class CNN(nn.Module):
         x = self.bn5(relu(self.conv5(x)))
         x = self.maxpool(x)
         x = x.view(x.shape[0], -1)
-        x = self.dropout(relu(self.l_1(x)))
+        # x = self.dropout(relu(self.l_1(x)))
+        x = self.dropout(relu(x))
         # return softmax(self.l_out(x), dim=1)
         return self.l_out(x)
 
@@ -235,7 +237,7 @@ class CNN_3(nn.Module):
             in_features=self.l1_in_features // 256, out_features=num_l1, bias=True
         )
         
-        self.l_out = Linear(in_features=num_l1, out_features=num_classes, bias=False)
+        self.l_out = Linear(in_features=self.l1_in_features // 256, out_features=num_classes, bias=False)
 
         self.maxpool = nn.MaxPool2d(kernel_size=2, stride=2)
 
@@ -251,6 +253,7 @@ class CNN_3(nn.Module):
         x = self.bn3(relu(self.conv3(x)))
         x = self.maxpool(x)
         x = x.view(x.shape[0], -1)
-        x = self.dropout(relu(self.l_1(x)))
+        # x = self.dropout(relu(self.l_1(x)))
+        x = self.dropout(relu(x))
         # return softmax(self.l_out(x), dim=1)
         return self.l_out(x)
