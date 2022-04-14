@@ -94,7 +94,7 @@ def train(small, transf):
         num_workers=num_workers,
     )
 
-    model = CNN_3(input_channels=3, input_height=256, input_width=256, num_classes=7).to(
+    model = CNN(input_channels=3, input_height=256, input_width=256, num_classes=7).to(
         device
     )
 

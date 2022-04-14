@@ -13,7 +13,7 @@ python3 -m pip install --user -r requirements.txt
 #BSUB -q gpuv100
 #BSUB -gpu "num=1"
 ### -- set the job Name -- 
-#BSUB -J 5_CNN_13_4
+#BSUB -J 5_CNN_trans_14_4
 ### -- ask for number of cores (default: 1) -- 
 #BSUB -n 1 
 ### -- specify that the cores must be on the same host -- 
@@ -32,10 +32,10 @@ python3 -m pip install --user -r requirements.txt
 #BSUB -N 
 ### -- Specify the output and error file. %J is the job-id -- 
 ### -- -o and -e mean append, -oo and -eo mean overwrite -- 
-#BSUB -o 5_CNN_13_4.out 
-#BSUB -e 5_CNN_13_4.err 
+#BSUB -o 5_CNN_trans_14_4.out 
+#BSUB -e 5_CNN_trans_14_4.err 
 
 
 
 # here follow the commands you want to execute 
-python3 main.py train 0 0  #>> laplace_$hess.out #&> Test1.out
+python3 main.py train 0 1  #>> laplace_$hess.out #&> Test1.out
