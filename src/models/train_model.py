@@ -11,7 +11,7 @@ from torch.autograd import Variable
 from torch.utils.data import DataLoader
 
 from src.data.dataloader import MURADataset
-from src.models.models import CNN_3
+from src.models.models import CNN
 from src.models.utils import get_numpy, get_variable
 from src.models.Transformation import ChooseTrans
 
