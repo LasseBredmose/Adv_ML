@@ -233,9 +233,9 @@ class CNN_3(nn.Module):
             num_filters_conv3 * self.conv_out_height3 * self.conv_out_width3
         )
 
-        self.l_1 = Linear(
-            in_features=self.l1_in_features // 256, out_features=num_l1, bias=True
-        )
+        #self.l_1 = Linear(
+        #    in_features=self.l1_in_features // 256, out_features=num_l1, bias=True
+        #)
         
         self.l_out = Linear(in_features=self.l1_in_features // 256, out_features=num_classes, bias=False)
 
