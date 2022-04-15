@@ -37,7 +37,7 @@ if __name__ == "__main__":
     elif args[1] == "cam":
         # Epochs 2:
         # python3 main.py cam data/MURA-v1.1/valid/XR_SHOULDER/patient11723/study1_positive/image3.png models/STATEtrained_model_epocs2_24-03-2022_14.pt
-        
+
         # Epochs 2 igen
         # python3 main.py cam data/MURA-v1.1/valid/XR_SHOULDER/patient11723/study1_positive/image3.png models/STATEtrained_model_epocs2_07-04-2022_17.pt
 

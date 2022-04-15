@@ -6,4 +6,5 @@ data/.DS_Store
 src/__pycache__/
 src/data/__pycache__/
 src/models/__pycache__/
+.ipynb_checkpoints
 #models/*.pt
