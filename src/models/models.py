@@ -143,12 +143,7 @@ class CNN_3(nn.Module):
             padding=padding_size_conv1,  # 1
         )
 
-        self.conv_out_height = compute_conv_dim(
-            input_height, kernel_size_conv1, padding=padding_size_conv1
-        )
-        self.conv_out_width = compute_conv_dim(
-            input_width, kernel_size_conv1, padding=padding_size_conv1
-        )
+        self.bn1 = nn.BatchNorm2d(num_filters_conv1)
 
         # Second convolutional layer
         self.conv2 = Conv2d(
@@ -159,12 +154,7 @@ class CNN_3(nn.Module):
             padding=padding_size_conv2,
         )
 
-        self.conv_out_height2 = compute_conv_dim(
-            self.conv_out_height, kernel_size_conv2, padding=padding_size_conv2
-        )
-        self.conv_out_width2 = compute_conv_dim(
-            self.conv_out_width, kernel_size_conv2, padding=padding_size_conv2
-        )
+        self.bn2 = nn.BatchNorm2d(num_filters_conv2)
 
         # Third convolutional layer
         self.conv3 = Conv2d(
@@ -175,42 +165,23 @@ class CNN_3(nn.Module):
             padding=padding_size_conv3,
         )
 
-        self.conv_out_height3 = compute_conv_dim(
-            self.conv_out_height2, kernel_size_conv3, padding=padding_size_conv3
-        )
-        self.conv_out_width3 = compute_conv_dim(
-            self.conv_out_width2, kernel_size_conv3, padding=padding_size_conv3
-        )
+        self.bn3 = nn.BatchNorm2d(num_filters_conv3)
 
         # add dropout to network
         self.dropout = Dropout2d(p=0.2)
-        self.l1_in_features = (
-            num_filters_conv3 * self.conv_out_height3 * self.conv_out_width3
-        )
 
-        # self.l_1 = Linear(
-        #    in_features=self.l1_in_features // 256, out_features=num_l1, bias=True
-        # )
+        self.avgpool = nn.AvgPool2d(kernel_size=256 // 8)
 
         self.l_out = Linear(
-            in_features=self.l1_in_features // 256, out_features=num_classes, bias=False
+            in_features=num_filters_conv3, out_features=num_classes, bias=True
         )
-
-        self.maxpool = nn.MaxPool2d(kernel_size=2, stride=2)
-
-        self.bn1 = nn.BatchNorm2d(num_filters_conv1)
-
-        self.bn2 = nn.BatchNorm2d(num_filters_conv2)
-
-        self.bn3 = nn.BatchNorm2d(num_filters_conv3)
 
     def forward(self, x):
         x = self.dropout(self.bn1(relu(self.conv1(x))))
         x = self.bn2(relu(self.conv2(x)))
         x = self.bn3(relu(self.conv3(x)))
-        x = self.maxpool(x)
+        x = self.avgpool(x)
         x = x.view(x.shape[0], -1)
-        # x = self.dropout(relu(self.l_1(x)))
         x = self.dropout(relu(x))
         # return softmax(self.l_out(x), dim=1)
         return self.l_out(x)

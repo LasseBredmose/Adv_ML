@@ -11,7 +11,7 @@ from torch.autograd import Variable
 from torch.utils.data import DataLoader
 
 from src.data.dataloader import MURADataset
-from src.models.models import CNN
+from src.models.models import CNN, CNN_3
 from src.models.utils import get_numpy, get_variable
 from src.models.Transformation import ChooseTrans
 
@@ -20,7 +20,7 @@ from torch.nn.functional import softmax
 warnings.filterwarnings("ignore")
 
 
-def train(small, transf):
+def train(small, transf, layers):
     # Cuda Stuff
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -36,7 +36,7 @@ def train(small, transf):
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
         ]
     )
-    ChosenTrans = ['Blank', 'FlipV', 'FlipH', 'Rotate90', 'Rotate180', 'Rotate270']
+    ChosenTrans = ["Blank", "FlipV", "FlipH", "Rotate90", "Rotate180", "Rotate270"]
     num_epochs = 100
     learning_rate = 0.001
     w_decay = 0.001
@@ -94,9 +94,14 @@ def train(small, transf):
         num_workers=num_workers,
     )
 
-    model = CNN(input_channels=3, input_height=256, input_width=256, num_classes=7).to(
-        device
-    )
+    if layers == 3:
+        model = CNN_3(
+            input_channels=3, input_height=256, input_width=256, num_classes=7
+        ).to(device)
+    else:
+        model = CNN(
+            input_channels=3, input_height=256, input_width=256, num_classes=7
+        ).to(device)
 
     optimizer = torch.optim.Adam(
         model.parameters(), lr=learning_rate, weight_decay=w_decay
@@ -123,7 +128,6 @@ def train(small, transf):
             if transf == 1:
                 trans = ChooseTrans(ChosenTrans)
                 inputs = trans(inputs)
-        
 
             # zero the parameter gradients
             optimizer.zero_grad()
@@ -180,7 +184,7 @@ def train(small, transf):
     # torch.save(model, f'./models/trained_model_epocs{num_epochs}_{date_time}.pt')
     torch.save(
         model.state_dict(),
-        f"./models/STATEtrained_model_epocs{num_epochs}_{date_time}_trans_{transf}.pt",
+        f"./models/STATEtrained_model_epocs{num_epochs}_{date_time}_trans_{transf}_layers_{layers}.pt",
     )
 
     model.eval()
@@ -208,4 +212,6 @@ def train(small, transf):
         range(num_epochs), train_loss_epoch, range(num_epochs), validation_loss_epoch
     )
     plt.legend(["Training data", "Validation data"])
-    plt.savefig(f"./reports/epocs{num_epochs}_{date_time}_trans_{transf}")
+    plt.savefig(
+        f"./reports/epocs{num_epochs}_{date_time}_trans_{transf}_layers_{layers}"
+    )
