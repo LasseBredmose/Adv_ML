@@ -78,7 +78,7 @@ def laplace(model_path, hessian):
             map_location=torch.device(device),
         )
     )
-
+    print("model loaded")
     # Get targets
     targets = torch.cat([y for x, y in test_loader], dim=0)
 
@@ -167,6 +167,7 @@ def laplace_sample(la_path, N, method):
             map_location=torch.device(device),
         )
     )
+    print("model loaded")
 
     # Change the parameters
     model.l_out.weight.data = torch.reshape(samples.T, (7,100))

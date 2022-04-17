@@ -29,9 +29,9 @@ def pred(dataloader, model, laplace=False):
 
     for x, _ in dataloader:
         if laplace:
-            py.append(model(x))
+            py.append(model(get_variable(x)))
         else:
-            py.append(torch.softmax(model(x), dim=-1))
+            py.append(torch.softmax(model(get_variable(x)), dim=-1))
 
     return torch.cat(py).cpu()
 
