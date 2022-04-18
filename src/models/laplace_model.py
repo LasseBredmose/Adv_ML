@@ -1,16 +1,16 @@
-import warnings
 import time
-
+import warnings
 from datetime import datetime
+
 import torch
 import torchvision.transforms as transforms
 from laplace import Laplace
+from netcal.metrics import ECE
 from torch.utils.data import DataLoader
 
 from src.data.dataloader import MURADataset
-from src.models.models import CNN, CNN_3
-from netcal.metrics import ECE
-from src.models.utils import pred, save_laplace, load_laplace
+from src.models.models import CNN
+from src.models.utils import load_laplace, pred, save_laplace
 
 batch_size = 32
 shuffle = True
@@ -22,8 +22,6 @@ warnings.filterwarnings("ignore")
 def laplace(model_path, hessian):
     # Cuda Stuff
     device = "cuda" if torch.cuda.is_available() else "cpu"
-
-    use_cuda = torch.cuda.is_available()
 
     # Transforming the data, such that they all follow the same path
     transform = transforms.Compose(
@@ -115,7 +113,7 @@ def laplace_eval(la_path):
     transform = transforms.Compose(
         [
             transforms.Resize((256, 256)),
-            transforms.ToTensor(), 
+            transforms.ToTensor(),
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
         ]
     )
@@ -146,16 +144,21 @@ def laplace_eval(la_path):
 
 
 def laplace_sample(la_path, N, method):
-    la = load_laplace(la_path)
-    if method == 'average':
-        samples = la.sample(N).mean(axis=0)
-    if method == 'intersect':
-        samples = la.sample(N).min(axis=0)
-    if method == 'union':
-        samples = la.sample(N).max(axis=0)
-    
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    model = CNN_3(input_channels=3, input_height=256, input_width=256, num_classes=7).to(
+    la = load_laplace(la_path)
+
+    la._device = torch.device(device)
+
+    la_sample = la.sample(N)
+
+    if method == "average":
+        samples = la_sample.mean(axis=0)
+    if method == "intersect":
+        samples = la_sample.min(axis=0).values
+    if method == "union":
+        samples = la_sample.max(axis=0).values
+
+    model = CNN(input_channels=3, input_height=256, input_width=256, num_classes=7).to(
         device
     )
 
@@ -163,15 +166,16 @@ def laplace_sample(la_path, N, method):
 
     model.load_state_dict(
         torch.load(
-            'models/STATEtrained_model_epocs70_24-03-2022_22.pt',
+            "models/STATEtrained_model_epocs100_16_04_22_trans_1_layers_5.pt",
             map_location=torch.device(device),
         )
     )
-    print("model loaded")
 
-    # Change the parameters
-    model.l_out.weight.data = torch.reshape(samples.T, (7,100))
-    
+    model.l_out.weight.data = torch.reshape(
+        torch.reshape(samples, (65, 7))[:-1], (7, 64)
+    )
+    model.l_out.bias.data = torch.reshape(samples, (65, 7))[-1]
+
     date_time = datetime.now().strftime("%d-%m-%Y_%H")
     torch.save(
         model.state_dict(),

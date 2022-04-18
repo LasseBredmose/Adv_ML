@@ -1,7 +1,7 @@
-from torch.utils.data import Dataset
 import pandas as pd
-from PIL import Image
 import torch
+from PIL import Image
+from torch.utils.data import Dataset
 
 
 class MURADataset(Dataset):

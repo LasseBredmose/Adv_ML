@@ -2,11 +2,11 @@ import warnings
 
 import torch
 import torchvision.transforms as transforms
+from netcal.metrics import ECE
 from torch.utils.data import DataLoader
 
 from src.data.dataloader import MURADataset
-from src.models.models import CNN, CNN_3
-from netcal.metrics import ECE
+from src.models.models import CNN
 from src.models.utils import pred
 
 batch_size = 32
@@ -19,8 +19,6 @@ warnings.filterwarnings("ignore")
 def predict(model_path):
     # Cuda Stuff
     device = "cuda" if torch.cuda.is_available() else "cpu"
-
-    use_cuda = torch.cuda.is_available()
 
     # Transforming the data, such that they all follow the same path
     transform = transforms.Compose(

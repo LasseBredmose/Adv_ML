@@ -1,21 +1,20 @@
 import copy
 import warnings
-
 from datetime import datetime
+
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import torch.nn as nn
 import torchvision.transforms as transforms
 from torch.autograd import Variable
+from torch.nn.functional import softmax
 from torch.utils.data import DataLoader
 
 from src.data.dataloader import MURADataset
 from src.models.models import CNN, CNN_3
-from src.models.utils import get_numpy, get_variable
 from src.models.Transformation import ChooseTrans
-
-from torch.nn.functional import softmax
+from src.models.utils import get_numpy, get_variable
 
 warnings.filterwarnings("ignore")
 
@@ -213,5 +212,5 @@ def train(small, transf, layers):
     )
     plt.legend(["Training data", "Validation data"])
     plt.savefig(
-        f"./reports/epocs{num_epochs}_{date_time}_trans_{transf}_layers_{layers}"
+        f"./reports/cam/epocs{num_epochs}_{date_time}_trans_{transf}_layers_{layers}"
     )

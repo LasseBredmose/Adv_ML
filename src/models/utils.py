@@ -1,6 +1,5 @@
-import torch
 import dill
-import pickle
+import torch
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -42,6 +41,6 @@ def save_laplace(la, filepath):
 
 
 def load_laplace(filepath):
-    with open(filepath, "rb") as input:
-        la = pickle.load(input)
+    with open(filepath, "rb") as inpt:
+        la = dill.load(inpt)
     return la
