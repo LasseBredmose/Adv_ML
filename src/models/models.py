@@ -4,36 +4,34 @@ from torch.nn.functional import relu
 
 # Defining hyperparameters
 # First convolutional layer
-num_filters_conv1 = 16
+num_filters_conv1 = 64
 kernel_size_conv1 = 3
 stride_size_conv1 = 2  # half the size
 padding_size_conv1 = 1
 
 # Second convolutional layer
-num_filters_conv2 = 32
+num_filters_conv2 = 128
 kernel_size_conv2 = 5
 stride_size_conv2 = 2
 padding_size_conv2 = 2
 
 # Third convolutional layer
-num_filters_conv3 = 64
+num_filters_conv3 = 256
 kernel_size_conv3 = 5
 stride_size_conv3 = 2
 padding_size_conv3 = 2
 
 # Fourth convolutional layer
-num_filters_conv4 = 64
+num_filters_conv4 = 512
 kernel_size_conv4 = 5
 stride_size_conv4 = 1
 padding_size_conv4 = 2
 
 # Fifth convolutional layer
-num_filters_conv5 = 64
+num_filters_conv5 = 1024
 kernel_size_conv5 = 5
 stride_size_conv5 = 1
 padding_size_conv5 = 2
-
-num_l1 = 100
 
 
 def compute_conv_dim(dim_size, kernel_size, padding=0, stride=1):
