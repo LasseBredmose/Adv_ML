@@ -6,32 +6,32 @@ from torch.nn.functional import relu
 # First convolutional layer
 num_filters_conv1 = 16
 kernel_size_conv1 = 3
-stride_size_conv1 = 2  # half the size
+stride_size_conv1 = 1
 padding_size_conv1 = 1
 
 # Second convolutional layer
 num_filters_conv2 = 32
-kernel_size_conv2 = 5
-stride_size_conv2 = 2
-padding_size_conv2 = 2
+kernel_size_conv2 = 3
+stride_size_conv2 = 1
+padding_size_conv2 = 1
 
 # Third convolutional layer
 num_filters_conv3 = 64
-kernel_size_conv3 = 5
-stride_size_conv3 = 2
-padding_size_conv3 = 2
+kernel_size_conv3 = 3
+stride_size_conv3 = 1
+padding_size_conv3 = 1
 
 # Fourth convolutional layer
 num_filters_conv4 = 128
-kernel_size_conv4 = 5
+kernel_size_conv4 = 3
 stride_size_conv4 = 1
-padding_size_conv4 = 2
+padding_size_conv4 = 1
 
 # Fifth convolutional layer
 num_filters_conv5 = 256
-kernel_size_conv5 = 5
+kernel_size_conv5 = 3
 stride_size_conv5 = 1
-padding_size_conv5 = 2
+padding_size_conv5 = 1
 
 
 def compute_conv_dim(dim_size, kernel_size, padding=0, stride=1):
@@ -102,20 +102,22 @@ class CNN(nn.Module):
 
         self.bn5 = nn.BatchNorm2d(num_filters_conv5)
 
+        self.mp = nn.MaxPool2d(2, 2)
+
         # add dropout to network
         self.dropout = Dropout2d(p=0.2)
 
-        self.avgpool = nn.AvgPool2d(kernel_size=256 // 8)
+        self.avgpool = nn.AvgPool2d(16, 16)
 
         self.l_out = Linear(
             in_features=num_filters_conv5, out_features=num_classes, bias=True
         )
 
     def forward(self, x):
-        x = self.dropout(self.bn1(relu(self.conv1(x))))
-        x = self.bn2(relu(self.conv2(x)))
-        x = self.bn3(relu(self.conv3(x)))
-        x = self.bn4(relu(self.conv4(x)))
+        x = self.bn1(self.mp(relu(self.conv1(x))))
+        x = self.bn2(self.mp(relu(self.conv2(x))))
+        x = self.bn3(self.mp(relu(self.conv3(x))))
+        x = self.bn4(self.mp(relu(self.conv4(x))))
         x = self.bn5(relu(self.conv5(x)))
         x = self.avgpool(x)
         x = x.view(x.shape[0], -1)
