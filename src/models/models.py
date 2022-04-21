@@ -114,10 +114,10 @@ class CNN(nn.Module):
         )
 
     def forward(self, x):
-        x = self.bn1(self.mp(relu(self.conv1(x))))
-        x = self.bn2(self.mp(relu(self.conv2(x))))
-        x = self.bn3(self.mp(relu(self.conv3(x))))
-        x = self.bn4(self.mp(relu(self.conv4(x))))
+        x = self.mp(self.bn1(relu(self.conv1(x))))
+        x = self.mp(self.bn2(relu(self.conv2(x))))
+        x = self.mp(self.bn3(relu(self.conv3(x))))
+        x = self.mp(self.bn4(relu(self.conv4(x))))
         x = self.bn5(relu(self.conv5(x)))
         x = self.avgpool(x)
         x = x.view(x.shape[0], -1)

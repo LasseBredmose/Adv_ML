@@ -183,7 +183,7 @@ def train(small, transf, layers, arr):
     # torch.save(model, f'./models/trained_model_epocs{num_epochs}_{date_time}.pt')
     torch.save(
         model.state_dict(),
-        f"./models/STATEtrained_model_epocs{num_epochs}_{date_time}_trans_{transf}_layers_{layers}_arr_{arr}.pt",
+        f"./models/STATEtrained_model_epocs{num_epochs}_{date_time}_trans_{transf}_layers_{layers}_arr_{arr}_bnfirst.pt",
     )
 
     model.eval()
@@ -212,5 +212,5 @@ def train(small, transf, layers, arr):
     )
     plt.legend(["Training data", "Validation data"])
     plt.savefig(
-        f"./reports/learning_curve/epocs{num_epochs}_{date_time}_trans_{transf}_layers_{layers}_arr_{arr}"
+        f"./reports/learning_curve/epocs{num_epochs}_{date_time}_trans_{transf}_layers_{layers}_arr_{arr}__bnfirst"
     )
