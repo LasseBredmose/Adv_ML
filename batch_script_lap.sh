@@ -17,7 +17,7 @@ do
     #BSUB -q gpuv100
     #BSUB -gpu "num=1"
     ### -- set the job Name -- 
-    #BSUB -J laplace_full
+    #BSUB -J laplace_kron
     ### -- ask for number of cores (default: 1) -- 
     #BSUB -n 1 
     ### -- specify that the cores must be on the same host -- 
@@ -36,9 +36,9 @@ do
     #BSUB -N 
     ### -- Specify the output and error file. %J is the job-id -- 
     ### -- -o and -e mean append, -oo and -eo mean overwrite -- 
-    #BSUB -o laplace_full.out 
-    #BSUB -e laplace_full.err 
+    #BSUB -o laplace_kron.out 
+    #BSUB -e laplace_kron.err 
 
     # here follow the commands you want to execute 
-    python3 main.py laplace models/STATEtrained_model_epocs100_16_04_22_trans_1_layers_5.pt full
+    python3 main.py laplace models/STATEtrained_model_epocs100_21_04_00_trans_1_layers_5_arr_1.pt kron
 done

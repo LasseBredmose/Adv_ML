@@ -19,7 +19,7 @@ from src.models.utils import get_numpy, get_variable
 warnings.filterwarnings("ignore")
 
 
-def train(small, transf, layers):
+def train(small, transf, layers, arr):
     # Cuda Stuff
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -183,7 +183,7 @@ def train(small, transf, layers):
     # torch.save(model, f'./models/trained_model_epocs{num_epochs}_{date_time}.pt')
     torch.save(
         model.state_dict(),
-        f"./models/STATEtrained_model_epocs{num_epochs}_{date_time}_trans_{transf}_layers_{layers}.pt",
+        f"./models/STATEtrained_model_epocs{num_epochs}_{date_time}_trans_{transf}_layers_{layers}_arr_{arr}.pt",
     )
 
     model.eval()
@@ -212,5 +212,5 @@ def train(small, transf, layers):
     )
     plt.legend(["Training data", "Validation data"])
     plt.savefig(
-        f"./reports/cam/epocs{num_epochs}_{date_time}_trans_{transf}_layers_{layers}"
+        f"./reports/learning_curve/epocs{num_epochs}_{date_time}_trans_{transf}_layers_{layers}_arr_{arr}"
     )
