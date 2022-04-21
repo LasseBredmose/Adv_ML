@@ -172,12 +172,13 @@ def laplace_sample(la_path, N, method):
     )
 
     model.l_out.weight.data = torch.reshape(
-        torch.reshape(samples, (65, 7))[:-1], (7, 64)
+        torch.reshape(samples, (257, 7))[:-1], (7, 256)
     )
-    model.l_out.bias.data = torch.reshape(samples, (65, 7))[-1]
+    model.l_out.bias.data = torch.reshape(samples, (257, 7))[-1]
 
     date_time = datetime.now().strftime("%d-%m-%Y_%H")
     torch.save(
         model.state_dict(),
         f"./models/BNN_{date_time}.pt",
     )
+    

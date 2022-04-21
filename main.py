@@ -4,6 +4,7 @@ from src.models.cam import cam
 from src.models.laplace_model import laplace, laplace_eval, laplace_sample
 from src.models.predict_model import predict
 from src.models.train_model import train
+from src.models.deep_ensemble import deep_ensemble
 
 if __name__ == "__main__":
     """
@@ -52,3 +53,9 @@ if __name__ == "__main__":
             cam(image_path, model_path, tag=args[4])
         else:
             cam(image_path, model_path)
+    
+    elif args[1] == "deep":
+        # python3 main.py deep models/deep_ensemble 1
+        folder_path = args[2]
+        num_models = int(args[3])
+        deep_ensemble(folder_path, num_models)
