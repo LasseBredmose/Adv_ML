@@ -166,7 +166,7 @@ def laplace_sample(la_path, N, method):
 
     model.load_state_dict(
         torch.load(
-            "models/STATEtrained_model_epocs100_16_04_22_trans_1_layers_5.pt",
+            "models/STATEtrained_model_epocs100_21_04_21_trans_1_layers_5_arr_0.pt",
             map_location=torch.device(device),
         )
     )
@@ -176,9 +176,11 @@ def laplace_sample(la_path, N, method):
     )
     model.l_out.bias.data = torch.reshape(samples, (257, 7))[-1]
 
+    hess = la_path.split('_')[1]
+
     date_time = datetime.now().strftime("%d-%m-%Y_%H")
     torch.save(
         model.state_dict(),
-        f"./models/BNN_{date_time}.pt",
+        f"./models/BNN_{hess}_{method}_{date_time}.pt",
     )
     

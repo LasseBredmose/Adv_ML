@@ -23,7 +23,7 @@ if __name__ == "__main__":
 
     elif args[1] == "predict":
         model_path = args[2]
-        # Good model path: ./models/STATEtrained_model_epocs70_24-03-2022_22.pt
+        # Good model path: ./models/STATEtrained_model_epocs100_21_04_21_trans_1_layers_5_arr_0.pt
         predict(model_path)
 
     elif args[1] == "laplace":
@@ -43,17 +43,16 @@ if __name__ == "__main__":
 
     elif args[1] == "cam":
         # CNN:
-        # python3 main.py cam data/MURA-v1.1/valid/XR_SHOULDER/patient11723/study1_positive/image3.png models/STATEtrained_model_epocs100_16_04_22_trans_1_layers_5.pt
+        # python3 main.py cam data/MURA-v1.1/valid/XR_SHOULDER/patient11723/study1_positive/image3.png models/STATEtrained_model_epocs100_21_04_21_trans_1_layers_5_arr_0.pt
 
         # BNN:
-        # python3 main.py cam data/MURA-v1.1/valid/XR_SHOULDER/patient11723/study1_positive/image3.png models/BNN_18-04-2022_11.pt
+        # python3 main.py cam data/MURA-v1.1/valid/XR_SHOULDER/patient11723/study1_positive/image3.png models/BNN_diag_average_23-04-2022_10.pt
+        # python3 main.py cam data/MURA-v1.1/valid/XR_WRIST/patient11185/study1_positive/image1.png models/BNN_diag_average_23-04-2022_10.pt
+
         image_path = args[2]
         model_path = args[3]
-        if len(args) > 4:
-            cam(image_path, model_path, tag=args[4])
-        else:
-            cam(image_path, model_path)
-    
+        cam(image_path, model_path)
+
     elif args[1] == "deep":
         # python3 main.py deep models/deep_ensemble 1
         folder_path = args[2]

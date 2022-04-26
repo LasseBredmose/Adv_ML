@@ -6,7 +6,7 @@ from torch.autograd import Variable
 from torch.nn import functional as F
 from torchvision import transforms
 
-from src.models.models import CNN
+from src.models.models import CNN, CNN_3
 
 
 def returnCAM(feature_conv, weight_softmax, class_idx):
@@ -27,11 +27,11 @@ def returnCAM(feature_conv, weight_softmax, class_idx):
 def cam(image_path, model_path, tag=None):
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
-    net = CNN(input_channels=3, input_height=256, input_width=256, num_classes=7).to(
+    net = CNN_3(input_channels=3, input_height=256, input_width=256, num_classes=7).to(
         device
     )
 
-    last_conv_name = "conv5"
+    last_conv_name = "conv3"
 
     net.load_state_dict(
         torch.load(
@@ -103,4 +103,10 @@ def cam(image_path, model_path, tag=None):
     height, width, _ = img.shape
     heatmap = cv2.applyColorMap(cv2.resize(CAMs[0], (width, height)), cv2.COLORMAP_JET)
     result = heatmap * 0.3 + img * 0.5
-    cv2.imwrite(f"reports/cam/CAM_{tag}_{'_'.join(image_path.split('/')[3:])}", result)
+
+    hess = model_path.split("_")[1]
+    method = model_path.split("_")[2]
+
+    cv2.imwrite(
+        f"reports/cam/CAM_{hess}_{method}_{'_'.join(image_path.split('/')[3:])}", result
+    )

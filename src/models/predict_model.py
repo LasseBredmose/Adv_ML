@@ -64,4 +64,7 @@ def predict(model_path):
     probs_cnn = pred(test_loader, model, laplace=False)
     acc_cnn = (probs_cnn.argmax(-1) == targets).float().sum() / len(targets)
     ece_cnn = ECE(bins=15).measure(probs_cnn.numpy(), targets.numpy())
+
+    torch.save(probs_cnn, f"./reports/cnn_probs/probs_{model_path.split('/')[1]}")
+
     print(f"[CNN] Acc.: {acc_cnn:.1%}; ECE: {ece_cnn:.1%}")
