@@ -168,21 +168,24 @@ class CNN_3(nn.Module):
 
         self.bn3 = nn.BatchNorm2d(num_filters_conv3)
 
+        self.mp = nn.MaxPool2d(2, 2)
+
         # add dropout to network
         self.dropout = Dropout2d(p=0.2)
 
-        self.avgpool = nn.AvgPool2d(kernel_size=256 // 8)
+        self.avgpool = nn.AvgPool2d(kernel_size=32)
 
         self.l_out = Linear(
             in_features=num_filters_conv3, out_features=num_classes, bias=True
         )
 
     def forward(self, x):
-        x = self.dropout(self.bn1(relu(self.conv1(x))))
-        x = self.bn2(relu(self.conv2(x)))
-        x = self.bn3(relu(self.conv3(x)))
+        x = self.bn1(self.mp(relu(self.conv1(x))))
+        x = self.bn2(self.mp(relu(self.conv2(x))))
+        x = self.bn3(self.mp(relu(self.conv3(x))))
         x = self.avgpool(x)
         x = x.view(x.shape[0], -1)
-        x = self.dropout(relu(x))
+        # x = self.dropout(relu(x))
+        x = self.dropout(x)
         # return softmax(self.l_out(x), dim=1)
         return self.l_out(x)
