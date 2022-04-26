@@ -17,7 +17,7 @@ module load cudnn/v8.3.0.98-prod-cuda-11.5
 #BSUB -q gpuv100
 #BSUB -gpu "num=1:mode=exclusive_process"
 ### -- set the job Name -- 
-#BSUB -J 5_CNN_26_4_trans_10op
+#BSUB -J 5_CNN_26_4_test
 ### -- ask for number of cores (default: 1) -- 
 #BSUB -n 1 
 ### -- specify that the cores must be on the same host -- 
@@ -36,8 +36,8 @@ module load cudnn/v8.3.0.98-prod-cuda-11.5
 #BSUB -N 
 ### -- Specify the output and error file. %J is the job-id -- 
 ### -- -o and -e mean append, -oo and -eo mean overwrite -- 
-#BSUB -o 5_CNN_26_4_trans_10op.out
-#BSUB -e 5_CNN_26_4_trans_10op.err
+#BSUB -o 5_CNN_26_4_test.out
+#BSUB -e 5_CNN_26_4_test.err
 
 # here follow the commands you want to execute 
 python3 main.py train $small_test $transformation $layers 0

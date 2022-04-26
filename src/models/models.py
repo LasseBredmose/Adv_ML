@@ -107,7 +107,7 @@ class CNN(nn.Module):
         # add dropout to network
         self.dropout = Dropout2d(p=0.2)
 
-        self.avgpool = nn.AvgPool2d(16, 16)
+        self.avgpool = nn.AvgPool2d(16)
 
         self.l_out = Linear(
             in_features=num_filters_conv5, out_features=num_classes, bias=True
@@ -121,7 +121,8 @@ class CNN(nn.Module):
         x = self.bn5(relu(self.conv5(x)))
         x = self.avgpool(x)
         x = x.view(x.shape[0], -1)
-        x = self.dropout(relu(x))
+        # x = self.dropout(relu(x))
+        x = self.dropout(x)
         # return softmax(self.l_out(x), dim=1)
         return self.l_out(x)
 
