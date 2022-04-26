@@ -3,20 +3,20 @@ Collecting dill==0.3.4 (from -r requirements.txt (line 1))
 Requirement already satisfied: laplace==0.1 in /zhome/45/c/128687/.local/lib/python3.6/site-packages (from -r requirements.txt (line 2))
 Collecting matplotlib==3.4.0 (from -r requirements.txt (line 3))
 model loaded
-Time elapsed (fit): 453.5342319011688 seconds
-[Laplace] Acc.: 72.6%; ECE: 18.4% 
+Time elapsed (fit): 268.85912227630615 seconds
+[Laplace] Acc.: 74.4%; ECE: 17.0% 
 model loaded
-Time elapsed (fit): 207.2634391784668 seconds
-[Laplace] Acc.: 72.6%; ECE: 18.4% 
+Time elapsed (fit): 194.37862706184387 seconds
+[Laplace] Acc.: 74.4%; ECE: 17.0% 
 model loaded
-Time elapsed (fit): 199.60149598121643 seconds
-[Laplace] Acc.: 72.6%; ECE: 18.4% 
+Time elapsed (fit): 188.45736694335938 seconds
+[Laplace] Acc.: 74.4%; ECE: 17.0% 
 model loaded
-Time elapsed (fit): 199.77870869636536 seconds
-[Laplace] Acc.: 72.6%; ECE: 18.4% 
+Time elapsed (fit): 188.27558183670044 seconds
+[Laplace] Acc.: 74.4%; ECE: 17.0% 
 model loaded
-Time elapsed (fit): 200.11747074127197 seconds
-[Laplace] Acc.: 72.6%; ECE: 18.4% 
+Time elapsed (fit): 188.3577709197998 seconds
+[Laplace] Acc.: 74.4%; ECE: 17.0% 
 model loaded
-Time elapsed (fit): 199.87861728668213 seconds
-[Laplace] Acc.: 72.6%; ECE: 18.4% 
+Time elapsed (fit): 188.20369672775269 seconds
+[Laplace] Acc.: 74.4%; ECE: 17.0% 
