@@ -181,13 +181,20 @@ def train(small, transf, layers, arr):
             best_model = copy.deepcopy(model.state_dict())
     print("Finished !!")
 
-    # Storing the model
-    date_time = datetime.now().strftime("%d_%m_%H")
+    date_time = datetime.now().strftime("%d_%m_%H_%M_%S")
+
+    # Storing the LAST model
+    torch.save(
+        model.state_dict(),
+        f"./models/STATEtrained_model_LAST_epochs{num_epochs}_{date_time}_trans_{transf}_layers_{layers}.pt",
+    )
+
+    # Storing the BEST model
     model.load_state_dict(best_model)
     # torch.save(model, f'./models/trained_model_epocs{num_epochs}_{date_time}.pt')
     torch.save(
         model.state_dict(),
-        f"./models/STATEtrained_model_epocs{num_epochs}_{date_time}_trans_{transf}_layers_{layers}.pt",
+        f"./models/STATEtrained_model_BEST_epochs{num_epochs}_{date_time}_trans_{transf}_layers_{layers}.pt",
     )
 
     model.eval()
@@ -216,5 +223,5 @@ def train(small, transf, layers, arr):
     )
     plt.legend(["Training data", "Validation data"])
     plt.savefig(
-        f"./reports/learning_curve/epocs{num_epochs}_{date_time}_trans_{transf}_layers_{layers}"
+        f"./reports/learning_curve/epochs{num_epochs}_{date_time}_trans_{transf}_layers_{layers}"
     )
