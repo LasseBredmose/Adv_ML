@@ -38,7 +38,7 @@ def train(small, transf, layers, arr):
     ChosenTrans = ["Blank", "FlipV", "FlipH", "Rotate90", "Rotate180", "Rotate270"]
     num_epochs = 100
     learning_rate = 0.001
-    w_decay = 0.001
+    w_decay = 0.01
     # train_CNN = False
     batch_size = 32
     shuffle = True
@@ -163,6 +163,10 @@ def train(small, transf, layers, arr):
                 get_variable(labels)
             )
 
+            if transf == 1:
+                trans = ChooseTrans(ChosenTrans)
+                inputs = trans(inputs)
+            
             # forward + backward + optimize
             output = softmax(model(inputs), dim=1)
             loss = criterion(output, labels)
@@ -183,7 +187,7 @@ def train(small, transf, layers, arr):
     # torch.save(model, f'./models/trained_model_epocs{num_epochs}_{date_time}.pt')
     torch.save(
         model.state_dict(),
-        f"./models/STATEtrained_model_epocs{num_epochs}_{date_time}_trans_{transf}_layers_{layers}_arr_{arr}_bnfirst.pt",
+        f"./models/STATEtrained_model_epocs{num_epochs}_{date_time}_trans_{transf}_layers_{layers}.pt",
     )
 
     model.eval()
@@ -212,5 +216,5 @@ def train(small, transf, layers, arr):
     )
     plt.legend(["Training data", "Validation data"])
     plt.savefig(
-        f"./reports/learning_curve/epocs{num_epochs}_{date_time}_trans_{transf}_layers_{layers}_arr_{arr}__bnfirst"
+        f"./reports/learning_curve/epocs{num_epochs}_{date_time}_trans_{transf}_layers_{layers}"
     )

@@ -29,7 +29,7 @@ class MURADataset(Dataset):
         self.data_dir = data_dir
         self.annotations = anno_df[["img_file", "label"]]
         self.transform = transform
-
+    
     def __getitem__(self, index):
         img_path = self.annotations.iloc[index]["img_file"]
         img = Image.open(f"{self.data_dir}/{img_path}").convert("RGB")
