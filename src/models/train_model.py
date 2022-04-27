@@ -20,9 +20,9 @@ warnings.filterwarnings("ignore")
 
 
 def train(small, transf, mp):
-    print(f'Small: {small}')
-    print(f'Transform: {transf}')
-    print(f'MaxPool: {mp}')
+    print(f"Small: {small}")
+    print(f"Transform: {transf}")
+    print(f"MaxPool: {mp}")
     # Cuda Stuff
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -43,7 +43,7 @@ def train(small, transf, mp):
     learning_rate = 0.001
     w_decay = 0.001
     # train_CNN = False
-    batch_size = 32
+    batch_size = 64
     shuffle = True
     # pin_memory = True
     num_workers = 1
@@ -122,8 +122,6 @@ def train(small, transf, mp):
 
             # get the inputs
             inputs, labels = data
-
-            print(labels)
 
             # wrap them in Variable
             inputs, labels = Variable(get_variable(inputs)), Variable(
