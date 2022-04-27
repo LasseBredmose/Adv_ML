@@ -12,14 +12,17 @@ from torch.nn.functional import softmax
 from torch.utils.data import DataLoader
 
 from src.data.dataloader import MURADataset
-from src.models.models import CNN, CNN_3
+from src.models.models import CNN_nomax, CNN
 from src.models.Transformation import ChooseTrans
 from src.models.utils import get_numpy, get_variable
 
 warnings.filterwarnings("ignore")
 
 
-def train(small, transf, layers, arr):
+def train(small, transf, mp):
+    print(f'Small: {small}')
+    print(f'Transform: {transf}')
+    print(f'MaxPool: {mp}')
     # Cuda Stuff
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -32,13 +35,13 @@ def train(small, transf, layers, arr):
         [
             transforms.Resize((256, 256)),
             transforms.ToTensor(),
-            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ]
     )
     ChosenTrans = ["Blank", "FlipV", "FlipH", "Rotate90", "Rotate180", "Rotate270"]
     num_epochs = 10
     learning_rate = 0.001
-    w_decay = 0.01
+    w_decay = 0.001
     # train_CNN = False
     batch_size = 32
     shuffle = True
@@ -93,8 +96,8 @@ def train(small, transf, layers, arr):
         num_workers=num_workers,
     )
 
-    if layers == 3:
-        model = CNN_3(
+    if mp == 0:
+        model = CNN_nomax(
             input_channels=3, input_height=256, input_width=256, num_classes=7
         ).to(device)
     else:
@@ -102,7 +105,7 @@ def train(small, transf, layers, arr):
             input_channels=3, input_height=256, input_width=256, num_classes=7
         ).to(device)
 
-    optimizer = torch.optim.Adam(
+    optimizer = torch.optim.SGD(
         model.parameters(), lr=learning_rate, weight_decay=w_decay
     )
     # scheduler = ReduceLROnPlateau(optimizer, "min")
@@ -120,6 +123,8 @@ def train(small, transf, layers, arr):
             # get the inputs
             inputs, labels = data
 
+            print(labels)
+
             # wrap them in Variable
             inputs, labels = Variable(get_variable(inputs)), Variable(
                 get_variable(labels)
@@ -132,7 +137,7 @@ def train(small, transf, layers, arr):
             optimizer.zero_grad()
 
             # forward + backward + optimize
-            #output = softmax(model(inputs), dim=1)
+            # output = softmax(model(inputs), dim=1)
             output = model(inputs)
             loss = criterion(output, labels)
             loss.backward()
@@ -164,16 +169,18 @@ def train(small, transf, layers, arr):
                 get_variable(labels)
             )
 
-            '''if transf == 1:
+            """if transf == 1:
                 trans = ChooseTrans(ChosenTrans)
-                inputs = trans(inputs)'''
-            
+                inputs = trans(inputs)"""
+
             # forward + backward + optimize
-            #output = softmax(model(inputs), dim=1)
+            # output = softmax(model(inputs), dim=1)
             output = model(inputs)
             loss = criterion(output, labels)
 
             validation_loss.append(get_numpy(loss))
+
+        print(f"VALIDATION loss: {np.mean(validation_loss)}")
 
         train_loss_epoch.append(np.mean(training_loss))
         validation_loss_epoch.append(np.mean(validation_loss))
@@ -188,7 +195,7 @@ def train(small, transf, layers, arr):
     # Storing the LAST model
     torch.save(
         model.state_dict(),
-        f"./models/STATEtrained_model_LAST_epochs{num_epochs}_{date_time}_trans_{transf}_layers_{layers}.pt",
+        f"./models/STATEtrained_model_LAST_epochs{num_epochs}_{date_time}_trans_{transf}_mp_{maxpool}.pt",
     )
 
     # Storing the BEST model
@@ -196,7 +203,7 @@ def train(small, transf, layers, arr):
     # torch.save(model, f'./models/trained_model_epocs{num_epochs}_{date_time}.pt')
     torch.save(
         model.state_dict(),
-        f"./models/STATEtrained_model_BEST_epochs{num_epochs}_{date_time}_trans_{transf}_layers_{layers}.pt",
+        f"./models/STATEtrained_model_BEST_epochs{num_epochs}_{date_time}_trans_{transf}_mp_{layers}.pt",
     )
 
     model.eval()
@@ -225,5 +232,5 @@ def train(small, transf, layers, arr):
     )
     plt.legend(["Training data", "Validation data"])
     plt.savefig(
-        f"./reports/learning_curve/epochs{num_epochs}_{date_time}_trans_{transf}_layers_{layers}"
+        f"./reports/learning_curve/epochs{num_epochs}_{date_time}_trans_{transf}_layers_{mp}"
     )

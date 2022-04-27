@@ -17,8 +17,8 @@ if __name__ == "__main__":
         train(
             small=int(args[2]),
             transf=int(args[3]),
-            layers=int(args[4]),
-            arr=int(args[5]),
+            mp=int(args[4]),
+            # arr=int(args[5]),
         )
 
     elif args[1] == "predict":

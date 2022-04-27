@@ -127,6 +127,89 @@ class CNN(nn.Module):
         return self.l_out(x)
 
 
+# Try a version without max pooling
+class CNN_nomax(nn.Module):
+    def __init__(self, input_channels, input_height, input_width, num_classes):
+        super(CNN_nomax, self).__init__()
+        self.input_channels = input_channels
+        self.input_height = input_height
+        self.input_width = input_width
+        self.num_classes = num_classes
+
+        # First convolutional layer
+        self.conv1 = Conv2d(
+            in_channels=3,
+            out_channels=16,
+            kernel_size=3,
+            stride=2,
+            padding=1,
+        )
+
+        self.bn1 = nn.BatchNorm2d(16)
+
+        # Second convolutional layer
+        self.conv2 = Conv2d(
+            in_channels=16,
+            out_channels=32,
+            kernel_size=5,
+            stride=2,
+            padding=2,
+        )
+
+        self.bn2 = nn.BatchNorm2d(32)
+
+        # Third convolutional layer
+        self.conv3 = Conv2d(
+            in_channels=32,
+            out_channels=64,
+            kernel_size=5,
+            stride=2,
+            padding=2,
+        )
+
+        self.bn3 = nn.BatchNorm2d(64)
+
+        # Fourth convolutional layer
+        self.conv4 = Conv2d(
+            in_channels=64,
+            out_channels=64,
+            kernel_size=5,
+            stride=1,
+            padding=2,
+        )
+
+        self.bn4 = nn.BatchNorm2d(64)
+
+        # Fourth convolutional layer
+        self.conv5 = Conv2d(
+            in_channels=64,
+            out_channels=64,
+            kernel_size=5,
+            stride=1,
+            padding=2,
+        )
+
+        self.bn5 = nn.BatchNorm2d(64)
+
+        # add dropout to network
+        self.dropout = Dropout2d(p=0.2)
+
+        self.avgpool = nn.AvgPool2d(256 // 8)
+
+        self.l_out = Linear(in_features=64, out_features=num_classes, bias=True)
+
+    def forward(self, x):
+        x = self.dropout(self.bn1(relu(self.conv1(x))))
+        x = self.bn2(relu(self.conv2(x)))
+        x = self.bn3(relu(self.conv3(x)))
+        x = self.bn4(relu(self.conv4(x)))
+        x = self.bn5(relu(self.conv5(x)))
+        x = self.avgpool(x)
+        x = x.view(x.shape[0], -1)
+        x = self.dropout(x)
+        return self.l_out(x)
+
+
 class CNN_3(nn.Module):
     def __init__(self, input_channels, input_height, input_width, num_classes):
         super(CNN_3, self).__init__()
