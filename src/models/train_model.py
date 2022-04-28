@@ -39,14 +39,15 @@ def train(small, transf, mp):
         ]
     )
     ChosenTrans = ["Blank", "FlipV", "FlipH", "Rotate90", "Rotate180", "Rotate270"]
-    num_epochs = 10
+    num_epochs = 100
     learning_rate = 0.001
     w_decay = 0.001
     # train_CNN = False
     batch_size = 64
     shuffle = True
     # pin_memory = True
-    num_workers = 1
+    num_workers = 2
+    
 
     dataset = MURADataset(
         "data",
@@ -193,7 +194,7 @@ def train(small, transf, mp):
     # Storing the LAST model
     torch.save(
         model.state_dict(),
-        f"./models/STATEtrained_model_LAST_epochs{num_epochs}_{date_time}_trans_{transf}_mp_{maxpool}.pt",
+        f"./models/STATEtrained_model_LAST_epochs{num_epochs}_{date_time}_trans_{transf}_mp_{mp}.pt",
     )
 
     # Storing the BEST model
@@ -201,7 +202,7 @@ def train(small, transf, mp):
     # torch.save(model, f'./models/trained_model_epocs{num_epochs}_{date_time}.pt')
     torch.save(
         model.state_dict(),
-        f"./models/STATEtrained_model_BEST_epochs{num_epochs}_{date_time}_trans_{transf}_mp_{layers}.pt",
+        f"./models/STATEtrained_model_BEST_epochs{num_epochs}_{date_time}_trans_{transf}_mp_{mp}.pt",
     )
 
     model.eval()
@@ -230,5 +231,5 @@ def train(small, transf, mp):
     )
     plt.legend(["Training data", "Validation data"])
     plt.savefig(
-        f"./reports/learning_curve/epochs{num_epochs}_{date_time}_trans_{transf}_layers_{mp}"
+        f"./reports/learning_curve/epochs{num_epochs}_{date_time}_trans_{transf}_mp_{mp}"
     )
