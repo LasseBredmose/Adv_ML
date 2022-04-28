@@ -6,7 +6,7 @@ from torch.autograd import Variable
 from torch.nn import functional as F
 from torchvision import transforms
 
-from src.models.models import CNN, CNN_3
+from src.models.models import CNN, CNN_nomax
 
 
 def returnCAM(feature_conv, weight_softmax, class_idx):
@@ -24,14 +24,19 @@ def returnCAM(feature_conv, weight_softmax, class_idx):
     return output_cam
 
 
-def cam(image_path, model_path, tag=None):
+def cam(image_path, model_path, mp):
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
-    net = CNN_3(input_channels=3, input_height=256, input_width=256, num_classes=7).to(
-        device
-    )
+    if mp == 0:
+        net = CNN_nomax(
+            input_channels=3, input_height=256, input_width=256, num_classes=7
+        ).to(device)
+    else:
+        net = CNN(
+            input_channels=3, input_height=256, input_width=256, num_classes=7
+        ).to(device)
 
-    last_conv_name = "conv3"
+    last_conv_name = "conv5"
 
     net.load_state_dict(
         torch.load(
@@ -54,17 +59,17 @@ def cam(image_path, model_path, tag=None):
     params = list(net.parameters())
     weight_softmax = np.squeeze(params[-2].data.numpy())
 
-    preprocess = transforms.Compose(
+    transform = transforms.Compose(
         [
             transforms.Resize((256, 256)),
             transforms.ToTensor(),
-            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ]
     )
 
     # load test image
     img_pil = Image.open(image_path).convert("RGB")
-    img_tensor = preprocess(img_pil)
+    img_tensor = transform(img_pil)
     img_variable = Variable(img_tensor.unsqueeze(0))
     logit = net(img_variable)
 
@@ -108,5 +113,5 @@ def cam(image_path, model_path, tag=None):
     method = model_path.split("_")[2]
 
     cv2.imwrite(
-        f"reports/cam/CAM_{hess}_{method}_{'_'.join(image_path.split('/')[3:])}", result
+        f"CAM_{hess}_{method}_mp_{mp}_{'_'.join(image_path.split('/')[3:])}", result
     )
