@@ -19,7 +19,7 @@ from src.models.utils import get_numpy, get_variable
 warnings.filterwarnings("ignore")
 
 
-def train(small, transf, mp):
+def train(small, transf, mp, arr):
     print(f"Small: {small}")
     print(f"Transform: {transf}")
     print(f"MaxPool: {mp}")
@@ -42,6 +42,7 @@ def train(small, transf, mp):
     num_epochs = 100
     learning_rate = 0.001
     w_decay = 0.001
+    mentum = 0.9
     # train_CNN = False
     batch_size = 64
     shuffle = True
@@ -107,7 +108,7 @@ def train(small, transf, mp):
         ).to(device)
 
     optimizer = torch.optim.SGD(
-        model.parameters(), lr=learning_rate, weight_decay=w_decay
+        model.parameters(), lr=learning_rate, weight_decay=w_decay, momentum=mentum
     )
     # scheduler = ReduceLROnPlateau(optimizer, "min")
     criterion = nn.CrossEntropyLoss()
@@ -194,7 +195,7 @@ def train(small, transf, mp):
     # Storing the LAST model
     torch.save(
         model.state_dict(),
-        f"./models/STATEtrained_model_LAST_epochs{num_epochs}_{date_time}_trans_{transf}_mp_{mp}.pt",
+        f"./models/STATEtrained_model_LAST_epochs{num_epochs}_{date_time}_trans_{transf}_mp_{mp}_arr_{arr}.pt",
     )
 
     # Storing the BEST model
@@ -202,7 +203,7 @@ def train(small, transf, mp):
     # torch.save(model, f'./models/trained_model_epocs{num_epochs}_{date_time}.pt')
     torch.save(
         model.state_dict(),
-        f"./models/STATEtrained_model_BEST_epochs{num_epochs}_{date_time}_trans_{transf}_mp_{mp}.pt",
+        f"./models/STATEtrained_model_BEST_epochs{num_epochs}_{date_time}_trans_{transf}_mp_{mp}_arr_{arr}.pt",
     )
 
     model.eval()
@@ -231,5 +232,5 @@ def train(small, transf, mp):
     )
     plt.legend(["Training data", "Validation data"])
     plt.savefig(
-        f"./reports/learning_curve/epochs{num_epochs}_{date_time}_trans_{transf}_mp_{mp}"
+        f"./reports/learning_curve/epochs{num_epochs}_{date_time}_trans_{transf}_mp_{mp}_arr_{arr}"
     )

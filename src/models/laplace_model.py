@@ -107,12 +107,12 @@ def laplace(model_path, hessian, mp):
     print(f"[Laplace] Acc.: {acc_laplace:.2%}; ECE: {ece_laplace:.2%} ")
 
     # Store the probabilities returned by Laplace
-    date_time = datetime.now().strftime("%d-%m-%Y_%H")
+    '''date_time = datetime.now().strftime("%d-%m-%Y_%H")
 
     model_name = model_path.split('/')[-1].split('.')[0]
     torch.save(probs_laplace, f"./reports/probs_laplace_{hessian}_{date_time}_{model_name}.pt")
 
-    save_laplace(la, f"./models/laplace_{hessian}_{date_time}_{model_name}.pkl")
+    save_laplace(la, f"./models/laplace_{hessian}_{date_time}_{model_name}.pkl")'''
 
 
 def laplace_eval(la_path):
