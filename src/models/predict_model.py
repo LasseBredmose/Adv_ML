@@ -6,7 +6,7 @@ from netcal.metrics import ECE
 from torch.utils.data import DataLoader
 
 from src.data.dataloader import MURADataset
-from src.models.models import CNN
+from src.models.models import CNN, CNN_nomax
 from src.models.utils import pred
 
 batch_size = 32
@@ -16,7 +16,7 @@ num_workers = 1
 warnings.filterwarnings("ignore")
 
 
-def predict(model_path):
+def predict(model_path, mp):
     # Cuda Stuff
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -25,7 +25,7 @@ def predict(model_path):
         [
             transforms.Resize((256, 256)),
             transforms.ToTensor(),
-            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ]
     )
 
@@ -43,9 +43,14 @@ def predict(model_path):
         num_workers=num_workers,
     )
 
-    model = CNN(input_channels=3, input_height=256, input_width=256, num_classes=7).to(
-        device
-    )
+    if mp == 0:
+        model = CNN_nomax(
+            input_channels=3, input_height=256, input_width=256, num_classes=7
+        ).to(device)
+    else:
+        model = CNN(
+            input_channels=3, input_height=256, input_width=256, num_classes=7
+        ).to(device)
 
     model.eval()
 
@@ -67,4 +72,5 @@ def predict(model_path):
 
     torch.save(probs_cnn, f"./reports/cnn_probs/probs_{model_path.split('/')[1]}")
 
-    print(f"[CNN] Acc.: {acc_cnn:.1%}; ECE: {ece_cnn:.1%}")
+    print(f"Model path: {model_path}")
+    print(f"[CNN] Acc.: {acc_cnn:.2%}; ECE: {ece_cnn:.2%}")

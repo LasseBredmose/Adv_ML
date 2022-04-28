@@ -23,8 +23,9 @@ if __name__ == "__main__":
 
     elif args[1] == "predict":
         model_path = args[2]
+        mp = int(args[3])
         # Good model path: ./models/STATEtrained_model_epocs100_21_04_21_trans_1_layers_5_arr_0.pt
-        predict(model_path)
+        predict(model_path, mp)
 
     elif args[1] == "laplace":
         model_path = args[2]
@@ -51,7 +52,8 @@ if __name__ == "__main__":
 
         image_path = args[2]
         model_path = args[3]
-        cam(image_path, model_path)
+        mp = int(args[4])  # whether there is max pooling
+        cam(image_path, model_path, mp)
 
     elif args[1] == "deep":
         # python3 main.py deep models/deep_ensemble 1
