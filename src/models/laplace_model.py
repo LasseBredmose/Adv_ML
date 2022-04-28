@@ -110,7 +110,7 @@ def laplace(model_path, hessian, mp):
     date_time = datetime.now().strftime("%d-%m-%Y_%H")
 
     model_name = model_path.split('/')[-1].split('.')[0]
-    torch.save(probs_laplace, f"./reports/probs_laplace_{hessian}_{date_time}_{model_name}")
+    torch.save(probs_laplace, f"./reports/probs_laplace_{hessian}_{date_time}_{model_name}.pt")
 
     save_laplace(la, f"./models/laplace_{hessian}_{date_time}_{model_name}.pkl")
 
