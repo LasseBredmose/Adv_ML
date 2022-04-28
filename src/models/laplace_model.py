@@ -9,7 +9,7 @@ from netcal.metrics import ECE
 from torch.utils.data import DataLoader
 
 from src.data.dataloader import MURADataset
-from src.models.models import CNN
+from src.models.models import CNN, CNN_nomax
 from src.models.utils import load_laplace, pred, save_laplace
 
 batch_size = 32
@@ -19,7 +19,7 @@ num_workers = 1
 warnings.filterwarnings("ignore")
 
 
-def laplace(model_path, hessian):
+def laplace(model_path, hessian, mp):
     # Cuda Stuff
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -28,7 +28,7 @@ def laplace(model_path, hessian):
         [
             transforms.Resize((256, 256)),
             transforms.ToTensor(),
-            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ]
     )
 
@@ -64,9 +64,14 @@ def laplace(model_path, hessian):
         num_workers=num_workers,
     )
 
-    model = CNN(input_channels=3, input_height=256, input_width=256, num_classes=7).to(
-        device
-    )
+    if mp == 0:
+        model = CNN_nomax(
+            input_channels=3, input_height=256, input_width=256, num_classes=7
+        ).to(device)
+    else:
+        model = CNN(
+            input_channels=3, input_height=256, input_width=256, num_classes=7
+        ).to(device)
 
     model.eval()
 
@@ -99,13 +104,15 @@ def laplace(model_path, hessian):
     probs_laplace = pred(test_loader, la, laplace=True)
     acc_laplace = (probs_laplace.argmax(-1) == targets).float().sum() / len(targets)
     ece_laplace = ECE(bins=15).measure(probs_laplace.numpy(), targets.numpy())
-    print(f"[Laplace] Acc.: {acc_laplace:.1%}; ECE: {ece_laplace:.1%} ")
+    print(f"[Laplace] Acc.: {acc_laplace:.2%}; ECE: {ece_laplace:.2%} ")
 
     # Store the probabilities returned by Laplace
     date_time = datetime.now().strftime("%d-%m-%Y_%H")
-    torch.save(probs_laplace, f"./reports/probs_laplace_{hessian}_{date_time}.pt")
 
-    save_laplace(la, f"./models/laplace_{hessian}_{date_time}.pkl")
+    model_name = model_path.split('/')[-1].split('.')[0]
+    torch.save(probs_laplace, f"./reports/probs_laplace_{hessian}_{date_time}_{model_name}")
+
+    save_laplace(la, f"./models/laplace_{hessian}_{date_time}_{model_name}.pkl")
 
 
 def laplace_eval(la_path):

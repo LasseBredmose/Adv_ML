@@ -30,7 +30,8 @@ if __name__ == "__main__":
     elif args[1] == "laplace":
         model_path = args[2]
         hessian = args[3]
-        laplace(model_path, hessian)
+        mp = int(args[4])
+        laplace(model_path, hessian, mp)
 
     elif args[1] == "eval_la":
         la_path = args[2]
