@@ -165,29 +165,29 @@ def laplace_sample(la_path, N, method):
     if method == "union":
         samples = la_sample.max(axis=0).values
 
-    model = CNN(input_channels=3, input_height=256, input_width=256, num_classes=7).to(
-        device
-    )
+    model = CNN_nomax(
+        input_channels=3, input_height=256, input_width=256, num_classes=7
+    ).to(device)
 
     model.eval()
 
     model.load_state_dict(
         torch.load(
-            "models/STATEtrained_model_epocs100_21_04_21_trans_1_layers_5_arr_0.pt",
+            "models/STATEtrained_model_LAST_epochs100_28_04_07_27_38_trans_0_mp_0.pt",
             map_location=torch.device(device),
         )
     )
 
     model.l_out.weight.data = torch.reshape(
-        torch.reshape(samples, (257, 7))[:-1], (7, 256)
+        torch.reshape(samples, (65, 7))[:-1], (7, 64)
     )
-    model.l_out.bias.data = torch.reshape(samples, (257, 7))[-1]
+    model.l_out.bias.data = torch.reshape(samples, (65, 7))[-1]
 
     hess = la_path.split('_')[1]
 
     date_time = datetime.now().strftime("%d-%m-%Y_%H")
     torch.save(
         model.state_dict(),
-        f"./models/BNN_{hess}_{method}_{date_time}.pt",
+        f"./models/BNN/BNN_STATEtrained_model_LAST_epochs100_28_04_07_27_38_trans_0_mp_0_{hess}_{method}_{date_time}.pt",
     )
     
