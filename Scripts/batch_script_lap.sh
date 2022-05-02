@@ -3,7 +3,8 @@
 
 python3 -m pip install --user -r requirements.txt
 
-list="1 2 3 4 5 6"
+list="1"
+mp=1
 for l in $list
 do
     # Load dependencies
@@ -17,9 +18,9 @@ do
     #BSUB -q gpuv100
     #BSUB -gpu "num=1"
     ### -- set the job Name -- 
-    #BSUB -J laplace_full
+    #BSUB -J laplace_kron
     ### -- ask for number of cores (default: 1) -- 
-    #BSUB -n 1 
+    #BSUB -n 1
     ### -- specify that the cores must be on the same host -- 
     ##BSUB -R "span[hosts=1]"
     ### -- specify that we need 2GB of memory per core/slot -- 
@@ -36,9 +37,9 @@ do
     #BSUB -N 
     ### -- Specify the output and error file. %J is the job-id -- 
     ### -- -o and -e mean append, -oo and -eo mean overwrite -- 
-    #BSUB -o laplace_full.out 
-    #BSUB -e laplace_full.err 
+    #BSUB -o laplace_kron.out 
+    #BSUB -e laplace_kron.err 
 
     # here follow the commands you want to execute 
-    python3 main.py laplace models/STATEtrained_model_epocs100_21_04_21_trans_1_layers_5_arr_0.pt full
+    python3 main.py laplace ./models/STATEtrained_model_LAST_epochs100_29_04_22_14_04_trans_1_mp_1_arr_0.pt kron $mp
 done

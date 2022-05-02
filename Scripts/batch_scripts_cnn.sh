@@ -2,20 +2,26 @@
 
 
 python3 -m pip install --user -r requirements.txt
-
 small_test=0
 transformation=1
-mp=1
+maxpool=1
+
+# Load dependencies
+module load python3/3.9.6
+# module load matplotlib/3.4.2-numpy-1.21.1-python-3.9.6
+module load pandas/1.3.1-python-3.9.6
+module load cuda/11.5
+module load cudnn/v8.3.0.98-prod-cuda-11.5
 ### General options 
 ### -- specify queue -- 
 #BSUB -q gpuv100
 #BSUB -gpu "num=1:mode=exclusive_process"
 ### -- set the job Name -- 
-#BSUB -J 5_CNN_ensample[1-10]
+#BSUB -J 5_CNN_28_4_mp_1_tran_1_momen
 ### -- ask for number of cores (default: 1) -- 
 #BSUB -n 1
 ### -- specify that the cores must be on the same host -- 
-##BSUB -R "span[hosts=1]"
+#BSUB -R "span[hosts=1]"
 ### -- specify that we need 2GB of memory per core/slot -- 
 #BSUB -R "rusage[mem=12GB]"
 ### -- set walltime limit: hh:mm -- 
@@ -30,15 +36,9 @@ mp=1
 #BSUB -N 
 ### -- Specify the output and error file. %J is the job-id -- 
 ### -- -o and -e mean append, -oo and -eo mean overwrite -- 
-#BSUB -o 5_CNN_ensample_momentum_%I_3.out 
-#BSUB -e 5_CNN_ensample_momentum_%I_3.err 
+#BSUB -o 5_CNN_28_4_mp_1_tran_1_momen.out
+#BSUB -e 5_CNN_28_4_mp_1_tran_1_momen.err
 
-# Load dependencies
-module load python3/3.9.6
-# module load matplotlib/3.4.2-numpy-1.21.1-python-3.9.6
-module load pandas/1.3.1-python-3.9.6
-module load cuda/11.5
-module load cudnn/v8.3.0.98-prod-cuda-11.5
 # here follow the commands you want to execute 
-python3 main.py train $small_test $transformation $mp $LSB_JOBINDEX
+python3 main.py train $small_test $transformation $maxpool 0
 

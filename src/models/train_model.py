@@ -19,7 +19,7 @@ from src.models.utils import get_numpy, get_variable
 warnings.filterwarnings("ignore")
 
 
-def train(small, transf, mp, arr):
+def train(small, transf, mp, arr=0):
     print(f"Small: {small}")
     print(f"Transform: {transf}")
     print(f"MaxPool: {mp}")
@@ -47,7 +47,7 @@ def train(small, transf, mp, arr):
     batch_size = 64
     shuffle = True
     # pin_memory = True
-    num_workers = 2
+    num_workers = 1
     
 
     dataset = MURADataset(
