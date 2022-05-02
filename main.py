@@ -4,7 +4,7 @@ from src.models.cam import cam
 from src.models.laplace_model import laplace, laplace_eval, laplace_sample
 from src.models.predict_model import predict
 from src.models.train_model import train
-from src.models.deep_ensemble import deep_ensemble
+from src.models.deep_ensemble import deep_ensemble, ensemble_cam
 
 if __name__ == "__main__":
     """
@@ -41,7 +41,8 @@ if __name__ == "__main__":
         # python3 main.py sample_la models/laplace.pkl average
         la_path = args[2]
         method = args[3]
-        laplace_sample(la_path, 10, method)
+        mp = int(args[4])
+        laplace_sample(la_path, 10, method, mp)
 
     elif args[1] == "cam":
         # CNN:
@@ -58,6 +59,11 @@ if __name__ == "__main__":
 
     elif args[1] == "deep":
         # python3 main.py deep models/deep_ensemble 1
-        folder_path = args[2]
-        num_models = int(args[3])
-        deep_ensemble(folder_path, num_models)
+        num_models = int(args[2])
+        deep_ensemble(num_models)
+
+    elif args[1] == "deepcam":
+        num_models = int(args[2])
+        image = args[3]
+        mp = int(args[4])
+        ensemble_cam(num_models, image, mp)

@@ -115,3 +115,5 @@ def cam(image_path, model_path, mp):
     cv2.imwrite(
         f"CAM_{hess}_{method}_mp_{mp}_{'_'.join(image_path.split('/')[3:])}", result
     )
+
+    return CAMs

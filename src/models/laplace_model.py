@@ -1,6 +1,7 @@
 import time
 import warnings
 from datetime import datetime
+from psutil import CONN_NONE
 
 import torch
 import torchvision.transforms as transforms
@@ -150,7 +151,7 @@ def laplace_eval(la_path):
     print(f"[Laplace] Acc.: {acc_laplace:.1%}; ECE: {ece_laplace:.1%} ")
 
 
-def laplace_sample(la_path, N, method):
+def laplace_sample(la_path, N, method, mp):
     device = "cuda" if torch.cuda.is_available() else "cpu"
     la = load_laplace(la_path)
 
@@ -165,29 +166,46 @@ def laplace_sample(la_path, N, method):
     if method == "union":
         samples = la_sample.max(axis=0).values
 
-    model = CNN_nomax(
-        input_channels=3, input_height=256, input_width=256, num_classes=7
-    ).to(device)
+    if mp == 0:
+        model = CNN_nomax(
+            input_channels=3, input_height=256, input_width=256, num_classes=7
+        ).to(device)
 
-    model.eval()
+        model.eval()
 
-    model.load_state_dict(
-        torch.load(
-            "models/STATEtrained_model_LAST_epochs100_28_04_07_27_38_trans_0_mp_0.pt",
-            map_location=torch.device(device),
+        model.load_state_dict(
+            torch.load(
+                "models/STATEtrained_model_LAST_epochs100_28_04_07_27_38_trans_0_mp_0.pt",
+                map_location=torch.device(device),
+            ))
+
+        model.l_out.weight.data = torch.reshape(
+            torch.reshape(samples, (65, 7))[:-1], (7, 64)
         )
-    )
+        model.l_out.bias.data = torch.reshape(samples, (65, 7))[-1]
 
-    model.l_out.weight.data = torch.reshape(
-        torch.reshape(samples, (65, 7))[:-1], (7, 64)
-    )
-    model.l_out.bias.data = torch.reshape(samples, (65, 7))[-1]
+    else:
+        model = CNN(
+            input_channels=3, input_height=256, input_width=256, num_classes=7
+        ).to(device)
+
+        model.eval()
+
+        model.load_state_dict(
+            torch.load(
+                "models/STATEtrained_model_LAST_epochs100_29_04_22_14_04_trans_1_mp_1_arr_0.pt",
+                map_location=torch.device(device),
+            ))
+
+        model.l_out.weight.data = torch.reshape(
+            torch.reshape(samples, (257, 7))[:-1], (7, 256)
+        )
+        model.l_out.bias.data = torch.reshape(samples, (257, 7))[-1]
 
     hess = la_path.split('_')[1]
-
     date_time = datetime.now().strftime("%d-%m-%Y_%H")
     torch.save(
         model.state_dict(),
-        f"./models/BNN/BNN_STATEtrained_model_LAST_epochs100_28_04_07_27_38_trans_0_mp_0_{hess}_{method}_{date_time}.pt",
+        f"./models/BNN/BNN_mp_{mp}_{hess}_{method}_{date_time}.pt",
     )
     
