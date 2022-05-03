@@ -30,8 +30,8 @@ mp=1
 #BSUB -N 
 ### -- Specify the output and error file. %J is the job-id -- 
 ### -- -o and -e mean append, -oo and -eo mean overwrite -- 
-#BSUB -o 5_CNN_ensample_momentum_%I_3.out 
-#BSUB -e 5_CNN_ensample_momentum_%I_3.err 
+#BSUB -o 5_CNN_ensample_momentum_%I.out 
+#BSUB -e 5_CNN_ensample_momentum_%I.err 
 
 # Load dependencies
 module load python3/3.9.6

@@ -1,7 +1,6 @@
 import time
 import warnings
 from datetime import datetime
-from psutil import CONN_NONE
 
 import torch
 import torchvision.transforms as transforms
