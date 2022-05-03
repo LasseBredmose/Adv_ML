@@ -103,7 +103,7 @@ def laplace(model_path, hessian, mp):
 
     probs_laplace = pred(test_loader, la, laplace=True)
     acc_laplace = (probs_laplace.argmax(-1) == targets).float().sum() / len(targets)
-    ece_laplace = ECE(bins=15).measure(probs_laplace.numpy(), targets.numpy())
+    ece_laplace = ECE(bins=25).measure(probs_laplace.numpy(), targets.numpy())
     print(f"[Laplace] Acc.: {acc_laplace:.2%}; ECE: {ece_laplace:.2%} ")
 
     # Store the probabilities returned by Laplace

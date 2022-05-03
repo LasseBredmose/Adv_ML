@@ -2,7 +2,7 @@
 
 
 python3 -m pip install --user -r requirements.txt
-maxpool=0
+maxpool=1
 
 # Load dependencies
 module load python3/3.9.6
@@ -15,7 +15,7 @@ module load cudnn/v8.3.0.98-prod-cuda-11.5
 #BSUB -q gpuv100
 #BSUB -gpu "num=1"
 ### -- set the job Name -- 
-#BSUB -J predict_2_5_mp_0_trans_0[1-10]
+#BSUB -J predict_3_5_mp_1_trans_1[1-10]
 ### -- ask for number of cores (default: 1) -- 
 #BSUB -n 1
 ### -- specify that the cores must be on the same host -- 
@@ -34,8 +34,8 @@ module load cudnn/v8.3.0.98-prod-cuda-11.5
 #BSUB -N 
 ### -- Specify the output and error file. %J is the job-id -- 
 ### -- -o and -e mean append, -oo and -eo mean overwrite -- 
-#BSUB -o predict_2_5_mp_0_trans_0_%I.out
-#BSUB -e predict_2_5_mp_0_trans_0_%I.err
+#BSUB -o predict_3_5_mp_1_trans_1_%I.out
+#BSUB -e predict_3_5_mp_1_trans_1_%I.err
 
 # here follow the commands you want to execute 
-python3 main.py predict ./models/deep_ensemble/*arr_$LSB_JOBINDEX.pt $maxpool
+python3 main.py predict ./models/deep_ensemble/moment/*arr_$LSB_JOBINDEX.pt $maxpool

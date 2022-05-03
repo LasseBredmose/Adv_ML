@@ -1,0 +1,4 @@
+Collecting dill==0.3.4 (from -r requirements.txt (line 1))
+Model loaded
+Model path: ./models/deep_ensemble/moment/STATEtrained_model_LAST_epochs100_03_05_06_41_11_trans_1_mp_1_arr_4.pt
+[CNN] Acc.: 92.74%; ECE: 0.88%
