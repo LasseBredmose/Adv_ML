@@ -3,7 +3,7 @@
 
 python3 -m pip install --user -r requirements.txt
 
-list="1 2 3 4 5 6"
+list="1 2 3"
 mp=1
 for l in $list
 do
@@ -18,7 +18,7 @@ do
     #BSUB -q gpuv100
     #BSUB -gpu "num=1"
     ### -- set the job Name -- 
-    #BSUB -J laplace_25_diag
+    #BSUB -J laplace_full[1-11]
     ### -- ask for number of cores (default: 1) -- 
     #BSUB -n 1
     ### -- specify that the cores must be on the same host -- 
@@ -37,9 +37,9 @@ do
     #BSUB -N 
     ### -- Specify the output and error file. %J is the job-id -- 
     ### -- -o and -e mean append, -oo and -eo mean overwrite -- 
-    #BSUB -o laplace_25_diag.out 
-    #BSUB -e laplace_25_diag.err 
+    #BSUB -o laplace_full_%I.out 
+    #BSUB -e laplace_full_%I.err 
 
     # here follow the commands you want to execute 
-    python3 main.py laplace ./models/STATEtrained_model_LAST_epochs100_29_04_22_14_04_trans_1_mp_1_arr_0.pt diag $mp
+    python3 main.py laplace ./models/deep_ensemble/moment/*arr_$LSB_JOBINDEX.pt full $mp
 done

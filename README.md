@@ -3,7 +3,7 @@ Repository for the course 02460 Advanced Machine Learning at DTU.
 
 To run our code, you can either train a model from scratch, but also use some of our already pretrained models! 😄 
 
-The pretrained model that we recommend to use is stored in `models/STATEtrained_model_epocs100_21_04_21_trans_1_layers_5_arr_0.pt`
+The pretrained model that we recommend to use is stored in `models/deep_ensemble/moment/STATEtrained_model_LAST_epochs100_29_04_22_14_04_trans_1_mp_1_arr_11.pt`
 
 ## Train
 Train on the full training set:

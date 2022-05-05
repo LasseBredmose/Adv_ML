@@ -1,0 +1,22 @@
+Collecting dill==0.3.4 (from -r requirements.txt (line 1))
+  Using cached https://files.pythonhosted.org/packages/b6/c3/973676ceb86b60835bb3978c6db67a5dc06be6cfdbd14ef0f5a13e3fc9fd/dill-0.3.4-py2.py3-none-any.whl
+Requirement already satisfied: laplace==0.1 in /zhome/45/c/128687/.local/lib/python3.6/site-packages (from -r requirements.txt (line 2))
+Collecting matplotlib==3.4.0 (from -r requirements.txt (line 3))
+model loaded
+Time elapsed (fit): 193.3376944065094 seconds
+[Laplace] Acc.: 91.80%; ECE: 3.16% 
+model loaded
+Time elapsed (fit): 192.63259649276733 seconds
+[Laplace] Acc.: 91.80%; ECE: 3.09% 
+model loaded
+Time elapsed (fit): 199.51600885391235 seconds
+[Laplace] Acc.: 91.80%; ECE: 3.13% 
+model loaded
+Time elapsed (fit): 195.41464042663574 seconds
+[Laplace] Acc.: 91.80%; ECE: 3.10% 
+model loaded
+Time elapsed (fit): 195.6969723701477 seconds
+[Laplace] Acc.: 91.80%; ECE: 3.15% 
+model loaded
+Time elapsed (fit): 196.26509594917297 seconds
+[Laplace] Acc.: 91.80%; ECE: 3.11% 
